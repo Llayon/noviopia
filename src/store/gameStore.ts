@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import {
   GameState,
+  GameEvent,
   OwnedGeneral,
   ActiveContract,
   RANK_MULTIPLIERS,
@@ -13,8 +14,8 @@ import {
 } from '../types/game'
 import allGenerals, { getGeneral } from '../data/generals'
 import { saveGame, loadSave, clearSave } from './save'
-import { generateRandomEvent, contractFailEvent, getDayEvent } from '../game/events'
-import contracts, { getContract } from '../data/contracts'
+import { contractFailEvent, getDayEvent } from '../game/events'
+import contractsData, { getContract } from '../data/contracts'
 
 let contractIdCounter = 0
 
@@ -118,6 +119,7 @@ export const useGameStore = create<GameState>()((set, get) => {
     totalPlayTime: initialPlayTime,
     generalsOrder: initialOrder,
     contracts: initialContracts,
+    toasts: [],
 
     dayCounter: saved?.dayCounter ?? 1,
     dayTimer: saved?.dayTimer ?? 0,
@@ -128,6 +130,20 @@ export const useGameStore = create<GameState>()((set, get) => {
 
     dismissReport: () => {
       set({ dailyReport: null })
+    },
+
+    dismissToast: (toastId: string) => {
+      set((s) => ({ toasts: s.toasts.filter((t) => t.id !== toastId) }))
+    },
+
+    openToastAsEvent: (toastId: string) => {
+      const state = get()
+      const toast = state.toasts.find((t) => t.id === toastId)
+      if (!toast) return
+      set({
+        activeEvent: toast.event,
+        toasts: state.toasts.filter((t) => t.id !== toastId),
+      })
     },
 
     buyGeneral: (id: string) => {
@@ -277,6 +293,26 @@ export const useGameStore = create<GameState>()((set, get) => {
         dayStartTushonka = state.resources.tushonka + income * deltaSeconds
       }
 
+      const nowMs = Date.now()
+      const newToasts = [...state.toasts]
+      const contractsWithMid = newContracts.map((ac) => {
+        if (ac.completed || ac.midEventTriggered) return ac
+        const c = getContract(ac.contractId)
+        if (!c?.midEvents?.length) return ac
+        const elapsed = nowMs - ac.startTime
+        const total = ac.endTime - ac.startTime
+        const progress = total > 0 ? elapsed / total : 0
+        if (progress >= 0.3 && progress <= 0.7) {
+          newToasts.push({
+            id: `toast_${ac.id}`,
+            event: c.midEvents[0],
+            contractId: ac.contractId,
+          })
+          return { ...ac, midEventTriggered: true }
+        }
+        return ac
+      })
+
       set({
         resources: {
           ...state.resources,
@@ -284,7 +320,8 @@ export const useGameStore = create<GameState>()((set, get) => {
         },
         ownedGenerals: newGenerals,
         totalPlayTime: state.totalPlayTime + deltaSeconds,
-        contracts: newContracts,
+        contracts: contractsWithMid,
+        toasts: newToasts,
         dayCounter,
         dayTimer,
         dailyReport,
@@ -340,14 +377,11 @@ export const useGameStore = create<GameState>()((set, get) => {
       set({ resources: newResources, activeEvent: null })
     },
 
-    triggerEvent: (customEvent?) => {
+    triggerEvent: (customEvent?: GameEvent) => {
       const state = get()
       if (state.activeEvent) return
-
-      const event = customEvent ?? generateRandomEvent()
-      if (event) {
-        set({ activeEvent: event })
-      }
+      if (!customEvent) return
+      set({ activeEvent: customEvent })
     },
 
     startContract: (contractId: string, generalIds: string[]) => {
@@ -380,6 +414,7 @@ export const useGameStore = create<GameState>()((set, get) => {
         endTime: now + c.durationSec * 1000,
         completed: false,
         success: false,
+        midEventTriggered: false,
       }
 
       set({ contracts: [...state.contracts, newContract] })
@@ -446,6 +481,7 @@ export const useGameStore = create<GameState>()((set, get) => {
         totalPlayTime: 0,
         generalsOrder: allGenerals.map((g) => g.id),
         contracts: [],
+        toasts: [],
         dayCounter: 1,
         dayTimer: 0,
         dayStartTushonka: 30,

@@ -846,6 +846,63 @@ body {
   color: var(--text);
 }
 
+/* ── Toast Bar ── */
+.toast-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 420px;
+  width: 100%;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+}
+
+.toast-item {
+  background: var(--bg-card);
+  border: 2px solid #e65100;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.toast-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toast-title {
+  font-size: 7px;
+  color: #e65100;
+  font-weight: bold;
+}
+
+.toast-desc {
+  font-size: 6px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.toast-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
 .contract-select-list {
   display: flex;
   flex-direction: column;

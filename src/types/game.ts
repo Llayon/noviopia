@@ -44,6 +44,7 @@ export interface Contract {
   requiredStats: Partial<GeneralStats>
   maxGenerals: number
   exactFit?: boolean
+  midEvents?: GameEvent[]
 }
 
 export interface ActiveContract {
@@ -54,6 +55,7 @@ export interface ActiveContract {
   endTime: number
   completed: boolean
   success: boolean
+  midEventTriggered: boolean
 }
 
 export interface GameEvent {
@@ -75,6 +77,12 @@ export interface EventChoice {
   loyaltyChange?: number
 }
 
+export interface ToastMessage {
+  id: string
+  event: GameEvent
+  contractId: string
+}
+
 export interface GameState {
   resources: GameResources
   ownedGenerals: Record<string, OwnedGeneral>
@@ -84,6 +92,7 @@ export interface GameState {
   totalPlayTime: number
   generalsOrder: string[]
   contracts: ActiveContract[]
+  toasts: ToastMessage[]
 
   dayCounter: number
   dayTimer: number
@@ -101,6 +110,8 @@ export interface GameState {
   triggerEvent: (customEvent?: GameEvent) => void
   reset: () => void
   dismissReport: () => void
+  dismissToast: (toastId: string) => void
+  openToastAsEvent: (toastId: string) => void
 
   startContract: (contractId: string, generalIds: string[]) => boolean
   claimContract: (activeId: string) => void
