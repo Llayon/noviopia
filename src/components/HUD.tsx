@@ -1,6 +1,6 @@
-import { useGameStore } from '../store/gameStore'
 import { getGeneral } from '../data/generals'
-import { RANK_MULTIPLIERS, MAX_LOYALTY } from '../types/game'
+import { useGameStore } from '../store/gameStore'
+import { MAX_LOYALTY, RANK_MULTIPLIERS } from '../types/game'
 
 export default function HUD() {
   const resources = useGameStore((s) => s.resources)

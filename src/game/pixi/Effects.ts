@@ -2,56 +2,10 @@ import { Container, Graphics, Ticker } from 'pixi.js'
 
 interface Particle {
   graphic: Graphics
-  vx: number
-  vy: number
   life: number
   maxLife: number
-}
-
-export function spawnTushonkaRain(container: Container, ticker: Ticker): void {
-  const particles: Particle[] = []
-
-  for (let i = 0; i < 20; i++) {
-    const can = new Graphics()
-    const x = Math.random() * 220 + 10
-    const size = 5 + Math.random() * 4
-
-    can.rect(x, -20 - Math.random() * 80, size, size * 1.3)
-    can.fill(0x8b4513)
-    can.rect(x + 1, -19 - Math.random() * 80, size - 2, 2)
-    can.fill(0xc0c0c0)
-
-    container.addChild(can)
-
-    particles.push({
-      graphic: can,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: 1.5 + Math.random() * 2,
-      life: 1,
-      maxLife: 120 + Math.random() * 80,
-    })
-  }
-
-  const onTick = () => {
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i]
-      p.life--
-      p.graphic.x += p.vx
-      p.graphic.y += p.vy
-
-      if (p.life <= 0) {
-        container.removeChild(p.graphic)
-        p.graphic.destroy()
-        particles.splice(i, 1)
-      }
-    }
-
-    if (particles.length === 0) {
-      ticker.remove(onTick)
-    }
-  }
-
-  ticker.add(onTick)
+  vx: number
+  vy: number
 }
 
 export function spawnStars(container: Container, ticker: Ticker): void {
@@ -83,10 +37,56 @@ export function spawnStars(container: Container, ticker: Ticker): void {
 
   let elapsed = 0
 
-  const onTick = () => {
+  const onTick = (): void => {
     elapsed++
     for (const s of stars) {
       s.graphic.alpha = 0.3 + Math.sin(elapsed * s.speed + s.phase) * 0.35
+    }
+  }
+
+  ticker.add(onTick)
+}
+
+export function spawnTushonkaRain(container: Container, ticker: Ticker): void {
+  const particles: Particle[] = []
+
+  for (let i = 0; i < 20; i++) {
+    const can = new Graphics()
+    const x = Math.random() * 220 + 10
+    const size = 5 + Math.random() * 4
+
+    can.rect(x, -20 - Math.random() * 80, size, size * 1.3)
+    can.fill(0x8b4513)
+    can.rect(x + 1, -19 - Math.random() * 80, size - 2, 2)
+    can.fill(0xc0c0c0)
+
+    container.addChild(can)
+
+    particles.push({
+      graphic: can,
+      life: 1,
+      maxLife: 120 + Math.random() * 80,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: 1.5 + Math.random() * 2,
+    })
+  }
+
+  const onTick = (): void => {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i]
+      p.life--
+      p.graphic.x += p.vx
+      p.graphic.y += p.vy
+
+      if (p.life <= 0) {
+        container.removeChild(p.graphic)
+        p.graphic.destroy()
+        particles.splice(i, 1)
+      }
+    }
+
+    if (particles.length === 0) {
+      ticker.remove(onTick)
     }
   }
 

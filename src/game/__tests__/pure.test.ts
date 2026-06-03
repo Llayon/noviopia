@@ -1,8 +1,10 @@
-import { describe, it, expect } from 'vitest'
-import { RANK_MULTIPLIERS, MAX_LOYALTY, MAX_STRESS } from '../../types/game'
-import type { OwnedGeneral, ActiveContract } from '../../types/game'
-import allGenerals from '../../data/generals'
+import { describe, expect, it } from 'vitest'
+
+import type { ActiveContract, OwnedGeneral } from '../../types/game'
+
 import contracts from '../../data/contracts'
+import allGenerals from '../../data/generals'
+import { MAX_LOYALTY, MAX_STRESS, RANK_MULTIPLIERS } from '../../types/game'
 
 function calcIncome(
   ownedGenerals: Record<string, OwnedGeneral>,
@@ -28,14 +30,14 @@ function calcIncome(
   return total
 }
 
-function makeOwned(overrides: Partial<OwnedGeneral> & { generalId: string }): OwnedGeneral {
+function makeOwned(overrides: { generalId: string } & Partial<OwnedGeneral>): OwnedGeneral {
   return {
-    level: 1,
-    rankIndex: 0,
-    loyalty: MAX_LOYALTY,
-    stress: 0,
-    isOwned: true,
     isActive: false,
+    isOwned: true,
+    level: 1,
+    loyalty: MAX_LOYALTY,
+    rankIndex: 0,
+    stress: 0,
     ...overrides,
   }
 }
@@ -80,8 +82,8 @@ describe('calcIncome', () => {
     const gens = { prokladov: makeOwned({ generalId: 'prokladov' }) }
     const contracts: ActiveContract[] = [
       {
-        id: 'ac_test', contractId: 'contract_1', generalIds: ['prokladov'],
-        startTime: 0, endTime: 99999, completed: false, success: false, midEventTriggered: false,
+        completed: false, contractId: 'contract_1', endTime: 99999,
+        generalIds: ['prokladov'], id: 'ac_test', midEventTriggered: false, startTime: 0, success: false,
       },
     ]
     const g = allGenerals.find((g) => g.id === 'prokladov')
@@ -102,8 +104,8 @@ describe('calcIncome', () => {
     const gens = { prokladov: makeOwned({ generalId: 'prokladov' }) }
     const contracts: ActiveContract[] = [
       {
-        id: 'ac_test', contractId: 'contract_1', generalIds: ['prokladov'],
-        startTime: 0, endTime: 0, completed: true, success: true, midEventTriggered: true,
+        completed: true, contractId: 'contract_1', endTime: 0,
+        generalIds: ['prokladov'], id: 'ac_test', midEventTriggered: true, startTime: 0, success: true,
       },
     ]
     const g = allGenerals.find((g) => g.id === 'prokladov')

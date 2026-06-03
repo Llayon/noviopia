@@ -2,202 +2,233 @@ import { GameEvent } from '../types/game'
 
 const allEvents: GameEvent[] = [
   {
-    id: 'proc_check',
-    title: 'Прокурорская проверка!',
-    description: 'Прокуратура заглянула на склад «с плановой проверкой». Тушенки на месте на 200 кг меньше, чем в отчёте. Нужно срочно что-то решать!',
-    type: 'inspection',
-    duration: 30,
     choices: [
       {
-        label: 'Подмазать прокуроров тушенкой',
         description: 'Отдать 100 кг тушенки прокурорам, чтобы закрыли глаза',
-        tushonkaCost: 100,
+        label: 'Подмазать прокуроров тушенкой',
         loyaltyChange: 5,
+        tushonkaCost: 100,
       },
       {
-        label: 'Сказать, что это мыши съели',
         description: 'Рискованно, но бесплатно. Правда, лояльность генералов упадёт.',
+        label: 'Сказать, что это мыши съели',
         loyaltyChange: -10,
       },
       {
-        label: 'Отправить генералов в отпуск',
         description: 'Пускай переждут в Дубае. Потеряете часть тушенки, но лояльность сохранится',
+        label: 'Отправить генералов в отпуск',
         tushonkaCost: 50,
       },
     ],
+    description: 'Прокуратура заглянула на склад «с плановой проверкой». Тушенки на месте на 200 кг меньше, чем в отчёте. Нужно срочно что-то решать!',
+    duration: 30,
+    id: 'proc_check',
+    title: 'Прокурорская проверка!',
+    type: 'inspection',
   },
   {
-    id: 'dubai_trip',
-    title: 'Генерал собрал чемоданы!',
-    description: 'Один из ваших генералов купил билет в Дубай в один конец. Если не остановить — коллекция поредеет, но если дать уехать, остальные увидят, что вы «человечны».',
-    type: 'escape',
-    duration: 20,
     choices: [
       {
-        label: 'Вернуть генерала (оплатить долги)',
         description: 'Заплатить его долги и вернуть на службу',
-        tushonkaCost: 80,
+        label: 'Вернуть генерала (оплатить долги)',
         loyaltyChange: 5,
+        tushonkaCost: 80,
       },
       {
-        label: 'Пусть летит — скатертью дорога',
         description: 'Потерять одного генерала (лояльность всех падает), но сэкономить тушенку',
+        label: 'Пусть летит — скатертью дорога',
         loyaltyChange: -15,
       },
       {
-        label: 'Инсценировать, что он в командировке',
         description: 'Скрыть его отъезд за 150 кг тушенки',
-        tushonkaCost: 150,
+        label: 'Инсценировать, что он в командировке',
         medalsReward: 1,
+        tushonkaCost: 150,
       },
     ],
+    description: 'Один из ваших генералов купил билет в Дубай в один конец. Если не остановить — коллекция поредеет, но если дать уехать, остальные увидят, что вы «человечны».',
+    duration: 20,
+    id: 'dubai_trip',
+    title: 'Генерал собрал чемоданы!',
+    type: 'escape',
   },
   {
-    id: 'poka_zaniy',
-    title: 'Дача показаний',
-    description: 'Генерала вызвали «дать пояснения» по факту недостачи. Всё серьёзно — Следственный комитет.',
-    type: 'testimony',
-    duration: 25,
     choices: [
       {
-        label: 'Нанять адвоката',
         description: 'Лучший адвокат за тушенку. Генерал вернётся целым.',
-        tushonkaCost: 120,
+        label: 'Нанять адвоката',
         loyaltyChange: 10,
+        tushonkaCost: 120,
       },
       {
-        label: 'Генерал сам разберётся',
         description: 'Экономия тушенки, но генерал может потерять лояльность',
+        label: 'Генерал сам разберётся',
         loyaltyChange: -5,
       },
       {
-        label: 'Сделать козлом отпущения другого',
         description: 'Подставить другую часть за 200 кг тушенки',
+        label: 'Сделать козлом отпущения другого',
         tushonkaCost: 200,
       },
     ],
+    description: 'Генерала вызвали «дать пояснения» по факту недостачи. Всё серьёзно — Следственный комитет.',
+    duration: 25,
+    id: 'poka_zaniy',
+    title: 'Дача показаний',
+    type: 'testimony',
   },
   {
-    id: 'promotion_offer',
-    title: 'Повышение! Но есть нюанс',
-    description: 'Вашего активного генерала повышают — но для этого нужно «отблагодарить» комиссию. Зато после повышения доход вырастет!',
-    type: 'promotion',
-    duration: 15,
     choices: [
       {
-        label: 'Оплатить повышение',
         description: 'Отблагодарить комиссию тушенкой. Доход генерала увеличится.',
-        tushonkaCost: 150,
+        label: 'Оплатить повышение',
         medalsReward: 2,
+        tushonkaCost: 150,
       },
       {
-        label: 'Отказаться — скромность украшает',
         description: 'Остаться на том же ранге. Без затрат, но и без профита.',
+        label: 'Отказаться — скромность украшает',
       },
     ],
+    description: 'Вашего активного генерала повышают — но для этого нужно «отблагодарить» комиссию. Зато после повышения доход вырастет!',
+    duration: 15,
+    id: 'promotion_offer',
+    title: 'Повышение! Но есть нюанс',
+    type: 'promotion',
   },
   {
-    id: 'skandal_report',
-    title: 'Утечка в СМИ!',
-    description: 'Журналисты опубликовали расследование о ваших схемах с тушенкой. Нужно срочно гасить скандал.',
-    type: 'scandal',
-    duration: 20,
     choices: [
       {
-        label: 'Заплатить журналистам отступных',
         description: 'Тушенкой, конечно. Дорого, но эффективно.',
+        label: 'Заплатить журналистам отступных',
         tushonkaCost: 180,
       },
       {
-        label: 'Нанять пиарщиков',
         description: 'Они докажут, что тушенка — это «стратегический запас»',
-        tushonkaCost: 80,
+        label: 'Нанять пиарщиков',
         medalsReward: 1,
+        tushonkaCost: 80,
       },
       {
-        label: 'Отмолчаться',
         description: 'Молчание — золото. Но осадочек останется.',
+        label: 'Отмолчаться',
         loyaltyChange: -5,
       },
     ],
+    description: 'Журналисты опубликовали расследование о ваших схемах с тушенкой. Нужно срочно гасить скандал.',
+    duration: 20,
+    id: 'skandal_report',
+    title: 'Утечка в СМИ!',
+    type: 'scandal',
   },
   {
-    id: 'revizionnaya',
-    title: 'Внезапная ревизия!',
-    description: 'Из Министерства приехала ревизионная комиссия. Считают каждую банку тушенки!',
-    type: 'inspection',
-    duration: 25,
     choices: [
       {
-        label: 'Комиссии — по банке тушенки',
         description: 'Недорого и сердито. Разойтись миром.',
+        label: 'Комиссии — по банке тушенки',
         tushonkaCost: 60,
       },
       {
-        label: 'Перенести склад в другое место',
         description: 'Пока комиссия ждёт, тушенка переезжает. Требует затрат на логистику.',
-        tushonkaCost: 100,
+        label: 'Перенести склад в другое место',
         loyaltyChange: 5,
+        tushonkaCost: 100,
       },
       {
-        label: 'Обвинить ревизоров в клевете',
         description: 'Встречный иск! Дерзко, но могут не купить.',
-        medalsCost: 1,
+        label: 'Обвинить ревизоров в клевете',
         loyaltyChange: 3,
+        medalsCost: 1,
       },
     ],
+    description: 'Из Министерства приехала ревизионная комиссия. Считают каждую банку тушенки!',
+    duration: 25,
+    id: 'revizionnaya',
+    title: 'Внезапная ревизия!',
+    type: 'inspection',
   },
   {
-    id: 'mercedes_gift',
-    title: 'Подарок начальству',
-    description: 'Высокопоставленный чиновник намекает, что ему пора «обновить автопарк». Намёк понят — нужно собрать тушенкой на Мерседес.',
-    type: 'promotion',
-    duration: 15,
     choices: [
       {
-        label: 'Скинуться всем складом',
         description: 'Дорого, но чиновник отстанет и даже закроет глаза на пару рейдов',
-        tushonkaCost: 250,
+        label: 'Скинуться всем складом',
         medalsReward: 3,
+        tushonkaCost: 250,
       },
       {
-        label: 'Дать ему «Жигули»',
         description: 'Дешево. Может обидеться, а может оценить иронию.',
+        label: 'Дать ему «Жигули»',
         tushonkaCost: 50,
       },
       {
-        label: 'Сказать, что тушенка закончилась',
         description: 'Чиновник запомнит. Вряд ли это хорошо.',
+        label: 'Сказать, что тушенка закончилась',
         loyaltyChange: -10,
       },
     ],
+    description: 'Высокопоставленный чиновник намекает, что ему пора «обновить автопарк». Намёк понят — нужно собрать тушенкой на Мерседес.',
+    duration: 15,
+    id: 'mercedes_gift',
+    title: 'Подарок начальству',
+    type: 'promotion',
   },
   {
-    id: 'army_check',
-    title: 'Армейская проверка',
-    description: 'Из Министерства обороны прилетела внезапная проверка боеготовности. А заодно и склада. «Где тушенка?» — спрашивают.',
-    type: 'inspection',
-    duration: 20,
     choices: [
       {
-        label: 'Сказать, что тушенка на учениях',
         description: '«Продукты выданы личному составу на полевой выход». Звучит убедительно.',
+        label: 'Сказать, что тушенка на учениях',
         tushonkaCost: 40,
       },
       {
-        label: 'Показать пустые полки, развести руками',
         description: 'Честность — лучшая политика. Ну, почти.',
+        label: 'Показать пустые полки, развести руками',
         loyaltyChange: -8,
       },
       {
-        label: 'Быстро докупить тушенку на рынке',
         description: 'Подороже выйдет, но проверку пройдёте',
-        tushonkaCost: 150,
+        label: 'Быстро докупить тушенку на рынке',
         loyaltyChange: 5,
+        tushonkaCost: 150,
       },
     ],
+    description: 'Из Министерства обороны прилетела внезапная проверка боеготовности. А заодно и склада. «Где тушенка?» — спрашивают.',
+    duration: 20,
+    id: 'army_check',
+    title: 'Армейская проверка',
+    type: 'inspection',
   },
 ]
+
+export function contractFailEvent(
+  contract: { name: string },
+  general?: { name: string },
+): GameEvent {
+  return {
+    choices: [
+      {
+        description: 'Заплатить штраф и забыть. Дорого, но эффективно.',
+        label: 'Откупиться тушенкой',
+        tushonkaCost: 100,
+      },
+      {
+        description: 'Найти козла отпущения. Лояльность генералов упадёт.',
+        label: 'Свалить вину на подчинённых',
+        loyaltyChange: -10,
+      },
+      {
+        description: 'Вспомнить старых друзей. Медали пригодятся.',
+        label: 'Замять через связи',
+        loyaltyChange: 5,
+        medalsCost: 1,
+      },
+    ],
+    description: `${general?.name ?? 'Генерал'} не справился с контрактом «${contract.name}». Прокуратура уже в курсе. Придётся откупаться.`,
+    duration: 25,
+    id: 'contract_fail',
+    title: 'Контракт провален!',
+    type: 'inspection',
+  }
+}
 
 export function generateRandomEvent(): GameEvent | null {
   if (allEvents.length === 0) return null
@@ -205,88 +236,57 @@ export function generateRandomEvent(): GameEvent | null {
   return { ...allEvents[idx], choices: [...allEvents[idx].choices] }
 }
 
-export function contractFailEvent(
-  contract: { name: string },
-  general?: { name: string },
-): GameEvent {
-  return {
-    id: 'contract_fail',
-    title: 'Контракт провален!',
-    description: `${general?.name ?? 'Генерал'} не справился с контрактом «${contract.name}». Прокуратура уже в курсе. Придётся откупаться.`,
-    type: 'inspection',
-    duration: 25,
-    choices: [
-      {
-        label: 'Откупиться тушенкой',
-        description: 'Заплатить штраф и забыть. Дорого, но эффективно.',
-        tushonkaCost: 100,
-      },
-      {
-        label: 'Свалить вину на подчинённых',
-        description: 'Найти козла отпущения. Лояльность генералов упадёт.',
-        loyaltyChange: -10,
-      },
-      {
-        label: 'Замять через связи',
-        description: 'Вспомнить старых друзей. Медали пригодятся.',
-        medalsCost: 1,
-        loyaltyChange: 5,
-      },
-    ],
-  }
-}
-
-const dayEvents: Record<number, GameEvent> = {
-  7: {
-    id: 'weekly_inspection',
-    title: 'Еженедельная инспекция',
-    description: 'Министерство обороны Лаоса проводит еженедельную проверку складов. Всё должно быть идеально — или вы лишитесь довольствия на месяц!',
-    type: 'inspection',
-    duration: 25,
-    choices: [
-      {
-        label: 'Подготовить склады заранее',
-        description: 'Вложить тушенку в наведение марафета на складах',
-        tushonkaCost: 80,
-        loyaltyChange: 5,
-      },
-      {
-        label: 'Дать инспекторам «премию»',
-        description: 'Каждому по ящику тушенки — и вопрос решён',
-        tushonkaCost: 120,
-      },
-      {
-        label: 'Сказать, что проверка не запланирована',
-        description: 'Хамовато, но сработает, если повезёт',
-        loyaltyChange: -10,
-      },
-    ],
-  },
+const dayEvents: Partial<Record<number, GameEvent>> = {
   30: {
-    id: 'big_revision',
-    title: 'Большая ревизия!',
-    description: 'Генеральный штаб прислал комиссию с полной ревизией всех активов. Цифры должны сойтись до последней банки!',
-    type: 'inspection',
-    duration: 30,
     choices: [
       {
-        label: 'Одолжить тушенку у соседнего округа',
         description: 'Занять тушенку, чтобы закрыть недостачу. Придётся отдать с процентами.',
-        tushonkaCost: 200,
+        label: 'Одолжить тушенку у соседнего округа',
         medalsReward: 1,
+        tushonkaCost: 200,
       },
       {
-        label: 'Подделать отчётность',
         description: 'Грамотный бухгалтер решит любую проблему с цифрами',
-        tushonkaCost: 100,
+        label: 'Подделать отчётность',
         loyaltyChange: -3,
+        tushonkaCost: 100,
       },
       {
-        label: 'Сжечь старые отчёты',
         description: 'Нет бумаг — нет проблем. Радикально, но действенно.',
+        label: 'Сжечь старые отчёты',
         tushonkaCost: 50,
       },
     ],
+    description: 'Генеральный штаб прислал комиссию с полной ревизией всех активов. Цифры должны сойтись до последней банки!',
+    duration: 30,
+    id: 'big_revision',
+    title: 'Большая ревизия!',
+    type: 'inspection',
+  },
+  7: {
+    choices: [
+      {
+        description: 'Вложить тушенку в наведение марафета на складах',
+        label: 'Подготовить склады заранее',
+        loyaltyChange: 5,
+        tushonkaCost: 80,
+      },
+      {
+        description: 'Каждому по ящику тушенки — и вопрос решён',
+        label: 'Дать инспекторам «премию»',
+        tushonkaCost: 120,
+      },
+      {
+        description: 'Хамовато, но сработает, если повезёт',
+        label: 'Сказать, что проверка не запланирована',
+        loyaltyChange: -10,
+      },
+    ],
+    description: 'Министерство обороны Лаоса проводит еженедельную проверку складов. Всё должно быть идеально — или вы лишитесь довольствия на месяц!',
+    duration: 25,
+    id: 'weekly_inspection',
+    title: 'Еженедельная инспекция',
+    type: 'inspection',
   },
 }
 

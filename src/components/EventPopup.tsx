@@ -22,9 +22,9 @@ export default function EventPopup() {
         <div className="event-choices">
           {activeEvent.choices.map((choice, idx) => (
             <button
-              key={idx}
               className="btn btn-choice"
-              onClick={() => resolveEvent(idx)}
+              key={idx}
+              onClick={() => { resolveEvent(idx); }}
             >
               <span className="choice-label">{choice.label}</span>
               <span className="choice-desc">{choice.description}</span>

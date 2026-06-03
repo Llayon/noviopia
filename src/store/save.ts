@@ -3,44 +3,44 @@ import { SaveDataSchema } from './schema'
 
 const SAVE_KEY = 'noviopia-save'
 
-export function saveGame(state: GameState): void {
-  try {
-    const data = JSON.stringify({
-      resources: state.resources,
-      ownedGenerals: state.ownedGenerals,
-      unlockedGenerals: state.unlockedGenerals,
-      lastSaveTimestamp: Date.now(),
-      totalPlayTime: state.totalPlayTime,
-      generalsOrder: state.generalsOrder,
-      dayCounter: state.dayCounter,
-      dayTimer: state.dayTimer,
-      dayStartTushonka: state.dayStartTushonka,
-      dayContractsCompleted: state.dayContractsCompleted,
-      dayContractsFailed: state.dayContractsFailed,
-    })
-    localStorage.setItem(SAVE_KEY, data)
-  } catch {
-    console.warn('Failed to save game')
-  }
+export function clearSave(): void {
+  localStorage.removeItem(SAVE_KEY)
 }
 
-export function loadSave(): Partial<GameState> | null {
+export function loadSave(): null | Partial<GameState> {
   try {
     const raw = localStorage.getItem(SAVE_KEY)
     if (!raw) return null
-    const parsed = JSON.parse(raw)
-    const result = SaveDataSchema.safeParse(parsed, undefined)
+    const parsed: unknown = JSON.parse(raw)
+    const result = SaveDataSchema.safeParse(parsed)
     if (!result.success) {
       console.warn('Save data validation failed, clearing:', result.error.issues)
       clearSave()
       return null
     }
-    return result.data as Partial<GameState>
+    return result.data
   } catch {
     return null
   }
 }
 
-export function clearSave(): void {
-  localStorage.removeItem(SAVE_KEY)
+export function saveGame(state: GameState): void {
+  try {
+    const data = JSON.stringify({
+      dayContractsCompleted: state.dayContractsCompleted,
+      dayContractsFailed: state.dayContractsFailed,
+      dayCounter: state.dayCounter,
+      dayStartTushonka: state.dayStartTushonka,
+      dayTimer: state.dayTimer,
+      generalsOrder: state.generalsOrder,
+      lastSaveTimestamp: Date.now(),
+      ownedGenerals: state.ownedGenerals,
+      resources: state.resources,
+      totalPlayTime: state.totalPlayTime,
+      unlockedGenerals: state.unlockedGenerals,
+    })
+    localStorage.setItem(SAVE_KEY, data)
+  } catch {
+    console.warn('Failed to save game')
+  }
 }

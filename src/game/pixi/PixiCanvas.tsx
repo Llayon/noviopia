@@ -1,9 +1,10 @@
+import { Application, Container, Graphics, Texture, TilingSprite } from 'pixi.js'
 import { useEffect, useRef } from 'react'
-import { Application, Container, TilingSprite, Texture, Graphics } from 'pixi.js'
-import { useGameStore } from '../../store/gameStore'
+
 import { getGeneral } from '../../data/generals'
-import { createPortrait } from './GeneralPortrait'
+import { useGameStore } from '../../store/gameStore'
 import { RARITY_COLORS } from '../../types/game'
+import { createPortrait } from './GeneralPortrait'
 
 const SIZE = 256
 
@@ -25,27 +26,27 @@ export default function PixiCanvas() {
 
     const initApp = async () => {
       await app.init({
-        width: SIZE,
-        height: SIZE,
-        backgroundAlpha: 0,
         antialias: false,
+        backgroundAlpha: 0,
+        height: SIZE,
         resolution: 1,
+        width: SIZE,
       })
 
       if (!containerRef.current) return
       containerRef.current.appendChild(app.canvas)
 
       const bg = new TilingSprite({
+        height: SIZE,
         texture: Texture.WHITE,
         width: SIZE,
-        height: SIZE,
       })
       bg.tint = 0x0f3460
 
       const stars = new TilingSprite({
+        height: SIZE,
         texture: Texture.WHITE,
         width: SIZE,
-        height: SIZE,
       })
       stars.alpha = 0.12
 
@@ -67,7 +68,7 @@ export default function PixiCanvas() {
       })
     }
 
-    initApp()
+    void initApp()
 
     return () => {
       app.destroy(true, { children: true, texture: true })
@@ -91,8 +92,8 @@ export default function PixiCanvas() {
     const glow = new Graphics()
     glow.rect(-6, -6, SIZE + 12, SIZE + 12)
     glow.fill({
-      color: parseInt(RARITY_COLORS[general.rarity].replace('#', ''), 16),
       alpha: 0.06,
+      color: parseInt(RARITY_COLORS[general.rarity].replace('#', ''), 16),
     })
     holder.addChildAt(glow, 0)
   }, [activeGeneralId])
@@ -101,10 +102,10 @@ export default function PixiCanvas() {
     <div
       ref={containerRef}
       style={{
-        width: SIZE,
         height: SIZE,
         imageRendering: 'pixelated',
         margin: '0 auto',
+        width: SIZE,
       }}
     />
   )

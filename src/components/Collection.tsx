@@ -1,6 +1,6 @@
-import { useGameStore } from '../store/gameStore'
 import { getGeneral } from '../data/generals'
-import { RARITY_COLORS, RANK_NAMES } from '../types/game'
+import { useGameStore } from '../store/gameStore'
+import { RANK_NAMES, RARITY_COLORS } from '../types/game'
 
 export default function Collection({
   onNavigate,
@@ -16,9 +16,9 @@ export default function Collection({
 
   const rarityOrder: Record<string, number> = {
     common: 0,
-    rare: 1,
     epic: 2,
     legendary: 3,
+    rare: 1,
   }
 
   const sorted = [...generalsOrder].sort((a, b) => {
@@ -34,7 +34,7 @@ export default function Collection({
   return (
     <div className="page collection-page">
       <div className="page-header">
-        <button className="btn btn-back" onClick={() => onNavigate('main')}>
+        <button className="btn btn-back" onClick={() => { onNavigate('main'); }}>
           ← На склад
         </button>
         <h2>Коллекция генералов</h2>
@@ -44,15 +44,18 @@ export default function Collection({
         {sorted.map((id) => {
           const general = getGeneral(id)
           const owned = ownedGenerals[id]
-          if (!general || !owned) return null
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          if (!general || !owned) {
+            return null
+          }
 
           const isOwned = owned.isOwned
           const canBuy = resources.tushonka >= general.cost && !isOwned
 
           return (
             <div
-              key={id}
               className={`collection-card ${isOwned ? 'owned' : 'locked'}`}
+              key={id}
               onClick={() => {
                 if (isOwned) {
                   useGameStore.getState().setActiveGeneral(id)
@@ -73,11 +76,11 @@ export default function Collection({
               {!isOwned && (
                 <button
                   className={`btn btn-buy ${canBuy ? '' : 'btn-disabled'}`}
+                  disabled={!canBuy}
                   onClick={(e) => {
                     e.stopPropagation()
                     buyGeneral(id)
                   }}
-                  disabled={!canBuy}
                 >
                   {general.cost} 🥫
                 </button>

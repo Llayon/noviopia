@@ -1,11 +1,12 @@
-import { useEffect, useRef } from 'react'
 import {
   Application,
-  Graphics,
   Container,
+  Graphics,
   Text,
 } from 'pixi.js'
-import { districts, District } from '../../data/laosMap'
+import { useEffect, useRef } from 'react'
+
+import { District, districts } from '../../data/laosMap'
 
 const MAP_W = 360
 const MAP_H = 480
@@ -30,11 +31,11 @@ export default function LaosMapView({
 
     const initApp = async () => {
       await app.init({
-        width: MAP_W,
-        height: MAP_H,
-        background: 0x0a1a0a,
         antialias: false,
+        background: 0x0a1a0a,
+        height: MAP_H,
         resolution: 1,
+        width: MAP_W,
       })
 
       if (!containerRef.current) return
@@ -72,17 +73,17 @@ export default function LaosMapView({
         }))
 
         g.poly(pts.map((p) => ({ x: p.x, y: p.y })))
-        g.fill({ color: district.color, alpha: 0.45 })
+        g.fill({ alpha: 0.45, color: district.color })
         g.poly(pts.map((p) => ({ x: p.x, y: p.y })))
-        g.stroke({ color: 0xffffff, alpha: 0.3, width: 1 })
+        g.stroke({ alpha: 0.3, color: 0xffffff, width: 1 })
         g.poly(pts.map((p) => ({ x: p.x, y: p.y })))
         g.stroke({ color: district.color, width: 3 })
 
         container.addChild(g)
 
         const lbl = new Text({
+          style: { fill: 0xffffff, fontFamily: '"Press Start 2P",monospace', fontSize: 8 },
           text: district.name,
-          style: { fontFamily: '"Press Start 2P",monospace', fontSize: 8, fill: 0xffffff },
         })
         const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length
         const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length
@@ -97,7 +98,7 @@ export default function LaosMapView({
         dot.fill(0xffd700)
         container.addChild(dot)
 
-        container.on('pointerdown', () => onDistrictClick({ district }))
+        container.on('pointerdown', () => { onDistrictClick({ district }); })
         container.on('pointerover', () => { container.alpha = 0.85 })
         container.on('pointerout', () => { container.alpha = 1 })
 
@@ -105,7 +106,7 @@ export default function LaosMapView({
       }
     }
 
-    initApp()
+    void initApp()
     return () => { app.destroy(true, { children: true }); appRef.current = null }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -114,11 +115,11 @@ export default function LaosMapView({
     <div
       ref={containerRef}
       style={{
-        width: MAP_W,
+        borderRadius: 4,
         height: MAP_H,
         margin: '0 auto',
-        borderRadius: 4,
         overflow: 'hidden',
+        width: MAP_W,
       }}
     />
   )

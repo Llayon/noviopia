@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react'
-import { useGameStore } from '../store/gameStore'
+import { useMemo, useState } from 'react'
+
 import contracts, { getContract } from '../data/contracts'
 import { getGeneral } from '../data/generals'
-import { RARITY_COLORS, RANK_NAMES } from '../types/game'
+import { useGameStore } from '../store/gameStore'
+import { type General, RANK_NAMES, RARITY_COLORS } from '../types/game'
 
 export default function ContractScreen({
   onNavigate,
@@ -14,7 +15,7 @@ export default function ContractScreen({
   const startContract = useGameStore((s) => s.startContract)
   const claimContract = useGameStore((s) => s.claimContract)
 
-  const [selectedContract, setSelectedContract] = useState<string | null>(null)
+  const [selectedContract, setSelectedContract] = useState<null | string>(null)
   const [selectedGenerals, setSelectedGenerals] = useState<Set<string>>(new Set())
   const [showAssign, setShowAssign] = useState(false)
 
@@ -49,7 +50,7 @@ export default function ContractScreen({
   return (
     <div className="page contract-page">
       <div className="page-header">
-        <button className="btn btn-back" onClick={() => onNavigate('main')}>
+        <button className="btn btn-back" onClick={() => { onNavigate('main'); }}>
           ← На склад
         </button>
         <h2>Госконтракты</h2>
@@ -61,16 +62,16 @@ export default function ContractScreen({
           <h3 className="section-title">В процессе</h3>
           {activeList.map((ac) => {
             const c = getContract(ac.contractId)
-            const gens = ac.generalIds.map((gid) => getGeneral(gid)).filter(Boolean)
+            const gens = ac.generalIds.map((gid) => getGeneral(gid)).filter((g): g is General => g != null)
             const elapsed = Date.now() - ac.startTime
             const total = (ac.endTime - ac.startTime) || 1
             const pct = Math.min(100, Math.round((elapsed / total) * 100))
 
             return (
-              <div key={ac.id} className="contract-card active">
+              <div className="contract-card active" key={ac.id}>
                 <div className="contract-name">{c?.name ?? '???'}</div>
                 <div className="contract-general">
-                  Исполняют: {gens.map((g) => g!.name).join(', ')}
+                  Исполняют: {gens.map((g) => g.name).join(', ')}
                 </div>
                 <div className="contract-progress-bar">
                   <div
@@ -91,16 +92,16 @@ export default function ContractScreen({
           <h3 className="section-title">Завершено</h3>
           {completedContracts.map((ac) => {
             const c = getContract(ac.contractId)
-            const gens = ac.generalIds.map((gid) => getGeneral(gid)).filter(Boolean)
+            const gens = ac.generalIds.map((gid) => getGeneral(gid)).filter((g): g is General => g != null)
             return (
               <div
-                key={ac.id}
                 className={`contract-card completed ${ac.success ? 'success' : 'fail'}`}
-                onClick={() => claimContract(ac.id)}
+                key={ac.id}
+                onClick={() => { claimContract(ac.id); }}
               >
                 <div className="contract-name">{c?.name ?? '???'}</div>
                 <div className="contract-general">
-                  {gens.map((g) => g!.name).join(', ')} — {ac.success ? '✅ Успех' : '❌ Провал'}
+                  {gens.map((g) => g.name).join(', ')} — {ac.success ? '✅ Успех' : '❌ Провал'}
                 </div>
                 {ac.success && (
                   <div className="contract-reward">+{c?.reward ?? 0} 🥫</div>
@@ -124,8 +125,8 @@ export default function ContractScreen({
 
           return (
             <div
-              key={c.id}
               className={`contract-card available ${isInProgress ? 'disabled' : ''}`}
+              key={c.id}
               onClick={() => {
                 if (!isInProgress) {
                   setSelectedContract(c.id)
@@ -148,8 +149,8 @@ export default function ContractScreen({
 
       {/* Assign modal */}
       {showAssign && selectedContract && (
-        <div className="modal-overlay" onClick={() => setShowAssign(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={() => { setShowAssign(false); }}>
+          <div className="modal" onClick={(e) => { e.stopPropagation(); }}>
             <h3>Назначить на контракт</h3>
             <p className="modal-desc">
               {(() => {
@@ -173,9 +174,9 @@ export default function ContractScreen({
                   const isSelected = selectedGenerals.has(o.generalId)
                   return (
                     <div
-                      key={o.generalId}
                       className={`general-option ${isSelected ? 'selected' : ''}`}
-                      onClick={() => toggleGeneral(o.generalId)}
+                      key={o.generalId}
+                      onClick={() => { toggleGeneral(o.generalId); }}
                     >
                       <span style={{ color: RARITY_COLORS[g.rarity] }}>
                         {g.name}
@@ -194,7 +195,7 @@ export default function ContractScreen({
             <div className="modal-actions">
               <button
                 className="btn btn-secondary"
-                onClick={() => setShowAssign(false)}
+                onClick={() => { setShowAssign(false); }}
               >
                 Отмена
               </button>

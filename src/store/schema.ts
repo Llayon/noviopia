@@ -1,43 +1,43 @@
 import { z } from 'zod'
 
 export const GameResourcesSchema = z.object({
-  tushonka: z.number(),
   medals: z.number(),
+  tushonka: z.number(),
 })
 
 export const OwnedGeneralSchema = z.object({
   generalId: z.string(),
-  level: z.number(),
-  rankIndex: z.number(),
-  loyalty: z.number(),
-  stress: z.number(),
-  isOwned: z.boolean(),
   isActive: z.boolean(),
+  isOwned: z.boolean(),
+  level: z.number(),
+  loyalty: z.number(),
+  rankIndex: z.number(),
+  stress: z.number(),
 })
 
 export const ActiveContractSchema = z.object({
-  id: z.string(),
-  contractId: z.string(),
-  generalIds: z.array(z.string()),
-  startTime: z.number(),
-  endTime: z.number(),
   completed: z.boolean(),
-  success: z.boolean(),
+  contractId: z.string(),
+  endTime: z.number(),
+  generalIds: z.array(z.string()),
+  id: z.string(),
   midEventTriggered: z.boolean(),
+  startTime: z.number(),
+  success: z.boolean(),
 })
 
 export const SaveDataSchema = z.object({
-  resources: GameResourcesSchema.optional(),
-  ownedGenerals: z.record(z.string(), OwnedGeneralSchema).optional(),
-  unlockedGenerals: z.array(z.string()).optional(),
-  lastSaveTimestamp: z.number().optional(),
-  totalPlayTime: z.number().optional(),
-  generalsOrder: z.array(z.string()).optional(),
-  dayCounter: z.number().optional(),
-  dayTimer: z.number().optional(),
-  dayStartTushonka: z.number().optional(),
   dayContractsCompleted: z.number().optional(),
   dayContractsFailed: z.number().optional(),
+  dayCounter: z.number().optional(),
+  dayStartTushonka: z.number().optional(),
+  dayTimer: z.number().optional(),
+  generalsOrder: z.array(z.string()).optional(),
+  lastSaveTimestamp: z.number().optional(),
+  ownedGenerals: z.record(z.string(), OwnedGeneralSchema).optional(),
+  resources: GameResourcesSchema.optional(),
+  totalPlayTime: z.number().optional(),
+  unlockedGenerals: z.array(z.string()).optional(),
 })
 
 // type inference not available in zod v4 classic import

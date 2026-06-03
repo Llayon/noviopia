@@ -1,7 +1,11 @@
 import { useGameStore } from '../store/gameStore'
 import { TICK_INTERVAL_MS } from '../types/game'
 
-let intervalId: ReturnType<typeof setInterval> | null = null
+let intervalId: null | ReturnType<typeof setInterval> = null
+
+export function isGameLoopRunning(): boolean {
+  return intervalId !== null
+}
 
 export function startGameLoop(): void {
   if (intervalId) return
@@ -18,8 +22,4 @@ export function stopGameLoop(): void {
     clearInterval(intervalId)
     intervalId = null
   }
-}
-
-export function isGameLoopRunning(): boolean {
-  return intervalId !== null
 }

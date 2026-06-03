@@ -1,26 +1,9 @@
-import { Graphics, Container } from 'pixi.js'
+import { Container, Graphics } from 'pixi.js'
+
 import { General, Rarity, RARITY_COLORS } from '../../types/game'
 
 const PIXEL = 8
 const SIZE = 32
-
-function hashSeed(id: string): number {
-  let h = 0
-  for (let i = 0; i < id.length; i++) {
-    h = (h << 5) - h + id.charCodeAt(i)
-    h = h & h
-  }
-  return Math.abs(h)
-}
-
-function rarityColor(rarity: Rarity): number {
-  switch (rarity) {
-    case 'common':   return 0x4a6741
-    case 'rare':     return 0x1a4a7a
-    case 'epic':     return 0x6a1a2a
-    case 'legendary': return 0x2a1a4a
-  }
-}
 
 export function createPortrait(general: General): Container {
   const container = new Container()
@@ -85,6 +68,24 @@ export function createPortrait(general: General): Container {
 
   container.addChild(g)
   return container
+}
+
+function hashSeed(id: string): number {
+  let h = 0
+  for (let i = 0; i < id.length; i++) {
+    h = (h << 5) - h + id.charCodeAt(i)
+    h = h & h
+  }
+  return Math.abs(h)
+}
+
+function rarityColor(rarity: Rarity): number {
+  switch (rarity) {
+    case 'common':   return 0x4a6741
+    case 'epic':     return 0x6a1a2a
+    case 'legendary': return 0x2a1a4a
+    case 'rare':     return 0x1a4a7a
+  }
 }
 
 

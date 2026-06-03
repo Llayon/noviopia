@@ -1,33 +1,34 @@
-import { useState, useEffect, lazy, Suspense } from 'react'
-import MainScreen from './components/MainScreen'
+import { lazy, Suspense, useEffect, useState } from 'react'
+
 import Collection from './components/Collection'
-import GeneralDetail from './components/GeneralDetail'
-import EventPopup from './components/EventPopup'
-import DailyReport from './components/DailyReport'
-import ToastBar from './components/ToastBar'
 import ContractScreen from './components/ContractScreen'
+import DailyReport from './components/DailyReport'
+import EventPopup from './components/EventPopup'
+import GeneralDetail from './components/GeneralDetail'
+import MainScreen from './components/MainScreen'
+import ToastBar from './components/ToastBar'
 import { startGameLoop, stopGameLoop } from './game/GameLoop'
 import { useGameStore } from './store/gameStore'
 
 const MapScreen = lazy(() => import('./components/MapScreen'))
 
-type Page = 'main' | 'map' | 'collection' | 'detail' | 'contracts'
+type Page = 'collection' | 'contracts' | 'detail' | 'main' | 'map'
 
 declare global {
   interface Window {
     Telegram?: {
       WebApp?: {
-        ready: () => void
-        expand: () => void
         close: () => void
+        expand: () => void
         initDataUnsafe?: {
           user?: {
-            id: number
             first_name: string
+            id: number
             last_name?: string
             username?: string
           }
         }
+        ready: () => void
       }
     }
   }
@@ -35,7 +36,7 @@ declare global {
 
 export default function App() {
   const [page, setPage] = useState<Page>('map')
-  const [selectedGeneral, setSelectedGeneral] = useState<string | null>(null)
+  const [selectedGeneral, setSelectedGeneral] = useState<null | string>(null)
   const activeEvent = useGameStore((s) => s.activeEvent)
 
   useEffect(() => {
@@ -44,7 +45,7 @@ export default function App() {
       window.Telegram.WebApp.ready()
       window.Telegram.WebApp.expand()
     }
-    return () => stopGameLoop()
+    return () => { stopGameLoop(); }
   }, [])
 
   const handleSelectGeneral = (id: string) => {
@@ -59,21 +60,21 @@ export default function App() {
           fallback={
             <div className="page" style={{ alignItems: 'center', justifyContent: 'center' }}>
               <div className="loader" />
-              <p style={{ marginTop: 16, fontSize: 8 }}>Загрузка карты...</p>
+              <p style={{ fontSize: 8, marginTop: 16 }}>Загрузка карты...</p>
             </div>
           }
         >
-          <MapScreen onNavigate={(p) => setPage(p as Page)} />
+          <MapScreen onNavigate={(p) => { setPage(p as Page); }} />
         </Suspense>
       )}
-      {page === 'main' && <MainScreen onNavigate={(p) => setPage(p as Page)} />}
+      {page === 'main' && <MainScreen onNavigate={(p) => { setPage(p as Page); }} />}
       {page === 'collection' && (
-        <Collection onNavigate={(p) => setPage(p as Page)} onSelectGeneral={handleSelectGeneral} />
+        <Collection onNavigate={(p) => { setPage(p as Page); }} onSelectGeneral={handleSelectGeneral} />
       )}
       {page === 'detail' && (
-        <GeneralDetail generalId={selectedGeneral} onNavigate={(p) => setPage(p as Page)} />
+        <GeneralDetail generalId={selectedGeneral} onNavigate={(p) => { setPage(p as Page); }} />
       )}
-      {page === 'contracts' && <ContractScreen onNavigate={(p) => setPage(p as Page)} />}
+      {page === 'contracts' && <ContractScreen onNavigate={(p) => { setPage(p as Page); }} />}
       <DailyReport />
       <ToastBar />
       {activeEvent && <EventPopup />}

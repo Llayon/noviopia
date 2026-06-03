@@ -1,19 +1,20 @@
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
+
+import contracts from '../data/contracts'
+import { getGeneral } from '../data/generals'
+import { getDistrict } from '../data/laosMap'
 import LaosMapView, { MapClickInfo } from '../game/pixi/LaosMapView'
 import { useGameStore } from '../store/gameStore'
 import HUD from './HUD'
-import { getDistrict } from '../data/laosMap'
-import contracts from '../data/contracts'
-import { getGeneral } from '../data/generals'
 
 export default function MapScreen({
   onNavigate,
 }: {
   onNavigate: (page: string) => void
 }) {
-  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null)
+  const [selectedDistrict, setSelectedDistrict] = useState<null | string>(null)
   const [showContractModal, setShowContractModal] = useState(false)
-  const [selectedContract, setSelectedContract] = useState<string | null>(null)
+  const [selectedContract, setSelectedContract] = useState<null | string>(null)
   const [selectedGenerals, setSelectedGenerals] = useState<Set<string>>(new Set())
 
   const ownedGenerals = useGameStore((s) => s.ownedGenerals)
@@ -64,19 +65,19 @@ export default function MapScreen({
       <div className="nav-buttons">
         <button
           className="btn btn-primary"
-          onClick={() => onNavigate('collection')}
+          onClick={() => { onNavigate('collection'); }}
         >
           Коллекция
         </button>
         <button
           className="btn btn-secondary"
-          onClick={() => onNavigate('contracts')}
+          onClick={() => { onNavigate('contracts'); }}
         >
           Контракты
         </button>
         <button
           className="btn btn-feed"
-          onClick={() => onNavigate('main')}
+          onClick={() => { onNavigate('main'); }}
         >
           Склад
         </button>
@@ -86,13 +87,13 @@ export default function MapScreen({
       {selectedDistrict && !showContractModal && (
         <div
           className="modal-overlay"
-          onClick={() => setSelectedDistrict(null)}
+          onClick={() => { setSelectedDistrict(null); }}
         >
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal" onClick={(e) => { e.stopPropagation(); }}>
             <DistrictInfo
               districtId={selectedDistrict}
-              onClose={() => setSelectedDistrict(null)}
-              onStartContract={() => setShowContractModal(true)}
+              onClose={() => { setSelectedDistrict(null); }}
+              onStartContract={() => { setShowContractModal(true); }}
             />
           </div>
         </div>
@@ -108,7 +109,7 @@ export default function MapScreen({
             setSelectedGenerals(new Set())
           }}
         >
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal" onClick={(e) => { e.stopPropagation(); }}>
             <h3>Начать контракт</h3>
             <p className="modal-desc">
               Выберите контракт и назначьте генералов
@@ -117,8 +118,8 @@ export default function MapScreen({
             <div className="contract-select-list">
               {contracts.map((c) => (
                 <div
-                  key={c.id}
                   className={`contract-option ${selectedContract === c.id ? 'selected' : ''}`}
+                  key={c.id}
                   onClick={() => {
                     setSelectedContract(c.id)
                     setSelectedGenerals(new Set())
@@ -158,9 +159,9 @@ export default function MapScreen({
                       const isSelected = selectedGenerals.has(o.generalId)
                       return (
                         <div
-                          key={o.generalId}
                           className={`general-option ${isSelected ? 'selected' : ''}`}
-                          onClick={() => toggleGeneral(o.generalId)}
+                          key={o.generalId}
+                          onClick={() => { toggleGeneral(o.generalId); }}
                         >
                           <span>{g.name}</span>
                           <span className="general-option-stress" style={{ color: o.stress > 50 ? '#e53935' : o.stress > 25 ? '#fb8c00' : '#4caf50' }}>
@@ -208,7 +209,7 @@ export default function MapScreen({
           <span>📋 {completedContracts.length} контракта завершено</span>
           <button
             className="btn btn-small"
-            onClick={() => onNavigate('contracts')}
+            onClick={() => { onNavigate('contracts'); }}
           >
             Забрать
           </button>

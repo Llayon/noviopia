@@ -1,35 +1,36 @@
 export interface District {
+  capital: string
+  capitalPos: [number, number]
+  color: number
+  description: string
   id: string
   name: string
-  capital: string
-  description: string
-  color: number
   // Polygon vertices as fraction of map size [x, y]
   polygon: [number, number][]
-  capitalPos: [number, number]
 }
 
 export const districts: District[] = [
   {
+    capital: 'Луангпхабанг',
+    capitalPos: [0.42, 0.12],
+    color: 0x2e7d32,
+    description: 'Горный район с труднодоступными складами. Идеально для «тихого» освоения бюджетов.',
     id: 'north',
     name: 'Северный округ',
-    capital: 'Луангпхабанг',
-    description: 'Горный район с труднодоступными складами. Идеально для «тихого» освоения бюджетов.',
-    color: 0x2e7d32,
     polygon: [
       [0.15, 0], [0.85, 0], [0.82, 0.08], [0.75, 0.16],
       [0.68, 0.20], [0.55, 0.22], [0.42, 0.21],
       [0.30, 0.19], [0.22, 0.16], [0.12, 0.10],
       [0.08, 0.05], [0.10, 0.02],
     ],
-    capitalPos: [0.42, 0.12],
   },
   {
+    capital: 'Вьентьян',
+    capitalPos: [0.25, 0.33],
+    color: 0x1565c0,
+    description: 'Столичный регион и экономический центр. Контракты здесь самые жирные.',
     id: 'central',
     name: 'Центральный округ',
-    capital: 'Вьентьян',
-    description: 'Столичный регион и экономический центр. Контракты здесь самые жирные.',
-    color: 0x1565c0,
     polygon: [
       [0.08, 0.26], [0.28, 0.28], [0.42, 0.28],
       [0.55, 0.27], [0.65, 0.26], [0.74, 0.23],
@@ -38,14 +39,14 @@ export const districts: District[] = [
       [0.22, 0.18], [0.14, 0.14],
       [0.08, 0.10], [0.05, 0.15], [0.04, 0.22],
     ],
-    capitalPos: [0.25, 0.33],
   },
   {
+    capital: 'Паксе',
+    capitalPos: [0.30, 0.54],
+    color: 0x6a1b9a,
+    description: 'Южные равнины — главная житница. Через границу идёт активный «экспорт».',
     id: 'south',
     name: 'Южный округ',
-    capital: 'Паксе',
-    description: 'Южные равнины — главная житница. Через границу идёт активный «экспорт».',
-    color: 0x6a1b9a,
     polygon: [
       [0.04, 0.34], [0.15, 0.36], [0.35, 0.38],
       [0.50, 0.40], [0.62, 0.42], [0.70, 0.44],
@@ -55,14 +56,14 @@ export const districts: District[] = [
       [0.28, 0.30], [0.18, 0.32], [0.10, 0.33],
       [0.02, 0.34],
     ],
-    capitalPos: [0.30, 0.54],
   },
   {
+    capital: 'Сиангкхуанг',
+    capitalPos: [0.80, 0.20],
+    color: 0xe65100,
+    description: 'Горное плато. Контрактов мало, зато стройки дешевле — рабочая сила ничего не стоит.',
     id: 'highlands',
     name: 'Горный округ',
-    capital: 'Сиангкхуанг',
-    description: 'Горное плато. Контрактов мало, зато стройки дешевле — рабочая сила ничего не стоит.',
-    color: 0xe65100,
     polygon: [
       [0.75, 0.08], [0.87, 0.06], [0.92, 0.10],
       [0.95, 0.18], [0.94, 0.24], [0.90, 0.30],
@@ -70,7 +71,6 @@ export const districts: District[] = [
       [0.76, 0.30], [0.74, 0.26], [0.72, 0.22],
       [0.70, 0.18], [0.72, 0.14],
     ],
-    capitalPos: [0.80, 0.20],
   },
 ]
 

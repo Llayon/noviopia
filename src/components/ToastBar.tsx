@@ -10,16 +10,16 @@ export default function ToastBar() {
   return (
     <div className="toast-bar">
       {toasts.map((t) => (
-        <div key={t.id} className="toast-item">
+        <div className="toast-item" key={t.id}>
           <div className="toast-content">
             <span className="toast-title">{t.event.title}</span>
             <span className="toast-desc">{t.event.description}</span>
           </div>
           <div className="toast-actions">
-            <button className="btn btn-small" onClick={() => openToastAsEvent(t.id)}>
+            <button className="btn btn-small" onClick={() => { openToastAsEvent(t.id); }}>
               Разобраться
             </button>
-            <button className="btn btn-small btn-back" onClick={() => dismissToast(t.id)}>
+            <button className="btn btn-small btn-back" onClick={() => { dismissToast(t.id); }}>
               ✕
             </button>
           </div>

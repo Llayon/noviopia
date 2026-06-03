@@ -1,18 +1,18 @@
-import { useGameStore } from '../store/gameStore'
 import { getGeneral } from '../data/generals'
+import { useGameStore } from '../store/gameStore'
 import {
-  RANK_NAMES,
-  RARITY_COLORS,
-  RANK_MULTIPLIERS,
   MAX_LOYALTY,
   MAX_STRESS,
+  RANK_MULTIPLIERS,
+  RANK_NAMES,
+  RARITY_COLORS,
 } from '../types/game'
 
 export default function GeneralDetail({
   generalId,
   onNavigate,
 }: {
-  generalId: string | null
+  generalId: null | string
   onNavigate: (page: string) => void
 }) {
   const ownedGenerals = useGameStore((s) => s.ownedGenerals)
@@ -28,7 +28,7 @@ export default function GeneralDetail({
     return (
       <div className="page">
         <div className="page-header">
-          <button className="btn btn-back" onClick={() => onNavigate('main')}>
+          <button className="btn btn-back" onClick={() => { onNavigate('main'); }}>
             ← На склад
           </button>
           <h2>Генерал</h2>
@@ -40,11 +40,12 @@ export default function GeneralDetail({
 
   const general = getGeneral(effectiveId)
   const owned = ownedGenerals[effectiveId]
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!general || !owned || !owned.isOwned) {
     return (
       <div className="page">
         <div className="page-header">
-          <button className="btn btn-back" onClick={() => onNavigate('main')}>
+          <button className="btn btn-back" onClick={() => { onNavigate('main'); }}>
             ← На склад
           </button>
           <h2>Генерал</h2>
@@ -66,7 +67,7 @@ export default function GeneralDetail({
   return (
     <div className="page detail-page">
       <div className="page-header">
-        <button className="btn btn-back" onClick={() => onNavigate('main')}>
+        <button className="btn btn-back" onClick={() => { onNavigate('main'); }}>
           ← На склад
         </button>
         <h2 style={{ color: RARITY_COLORS[general.rarity] }}>
@@ -78,18 +79,18 @@ export default function GeneralDetail({
         <div className="detail-description">{general.description}</div>
 
         <div className="stats-grid">
-          <StatBar label="Воровство" value={general.stats.theft} max={15} color="#e53935" />
-          <StatBar label="Скорость" value={general.stats.speed} max={15} color="#1e88e5" />
-          <StatBar label="Маскировка" value={general.stats.stealth} max={15} color="#43a047" />
-          <StatBar label="Лояльность" value={Math.floor(owned.loyalty)} max={MAX_LOYALTY} color="#fb8c00" />
-          <StatBar label="Стресс" value={Math.floor(owned.stress)} max={MAX_STRESS} color="#e53935" />
+          <StatBar color="#e53935" label="Воровство" max={15} value={general.stats.theft} />
+          <StatBar color="#1e88e5" label="Скорость" max={15} value={general.stats.speed} />
+          <StatBar color="#43a047" label="Маскировка" max={15} value={general.stats.stealth} />
+          <StatBar color="#fb8c00" label="Лояльность" max={MAX_LOYALTY} value={Math.floor(owned.loyalty)} />
+          <StatBar color="#e53935" label="Стресс" max={MAX_STRESS} value={Math.floor(owned.stress)} />
         </div>
 
         <div className="detail-info">
           <div className="info-row">
             <span>Ранг:</span>
             <span style={{ color: RARITY_COLORS[general.rarity] }}>
-              {RANK_NAMES[general.rank]} → {owned.rankIndex > 0 ? RANK_MULTIPLIERS[owned.rankIndex] + 'x' : '1x'}
+              {RANK_NAMES[general.rank]} → {owned.rankIndex > 0 ? `${RANK_MULTIPLIERS[owned.rankIndex]}x` : '1x'}
             </span>
           </div>
           <div className="info-row">
@@ -111,15 +112,15 @@ export default function GeneralDetail({
         <div className="detail-actions">
           <button
             className={`btn btn-feed ${!canFeed ? 'btn-disabled' : ''}`}
-            onClick={() => feedGeneral(effectiveId)}
             disabled={!canFeed}
+            onClick={() => feedGeneral(effectiveId)}
           >
             Кормить тушенкой (-{feedCost} 🥫)
           </button>
           <button
             className={`btn btn-upgrade ${!canUpgrade ? 'btn-disabled' : ''}`}
-            onClick={() => upgradeGeneral(effectiveId)}
             disabled={!canUpgrade}
+            onClick={() => upgradeGeneral(effectiveId)}
           >
             Повысить ранг (-{upgradeCost} 🥫)
           </button>
@@ -130,15 +131,15 @@ export default function GeneralDetail({
 }
 
 function StatBar({
-  label,
-  value,
-  max,
   color,
+  label,
+  max,
+  value,
 }: {
-  label: string
-  value: number
-  max: number
   color: string
+  label: string
+  max: number
+  value: number
 }) {
   const pct = (value / max) * 100
   return (
@@ -147,7 +148,7 @@ function StatBar({
       <div className="stat-track">
         <div
           className="stat-fill"
-          style={{ width: `${pct}%`, background: color }}
+          style={{ background: color, width: `${pct}%` }}
         />
       </div>
       <div className="stat-value">{value}</div>
