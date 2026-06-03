@@ -9,11 +9,13 @@ export function startGameLoop(): void {
 
   intervalId = setInterval(() => {
     const state = useGameStore.getState()
+    if (state.dailyReport) return
     state.tick(TICK_INTERVAL_MS / 1000)
   }, TICK_INTERVAL_MS)
 
   eventIntervalId = setInterval(() => {
     const state = useGameStore.getState()
+    if (state.dailyReport) return
     if (Math.random() < 0.3) {
       state.triggerEvent()
     }
