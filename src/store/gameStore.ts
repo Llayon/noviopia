@@ -43,16 +43,30 @@ export const useGameStore = create<GameState>()((set, get) => {
   const saved = loadSave()
 
   const baseGenerals = getInitialGenerals()
-  const baseUnlocked: string[] = []
-  const baseResources = { tushonka: 10, medals: 0 }
+  baseGenerals['prokladov'] = {
+    ...baseGenerals['prokladov'],
+    isOwned: true,
+    isActive: true,
+  }
+  const baseUnlocked: string[] = ['prokladov']
+  const baseResources = { tushonka: 30, medals: 0 }
   const baseOrder = allGenerals.map((g) => g.id)
 
-  const initialOwned = saved?.ownedGenerals ?? baseGenerals
-  const initialUnlocked = saved?.unlockedGenerals ?? baseUnlocked
-  const initialResources = saved?.resources ?? baseResources
+  let initialOwned = saved?.ownedGenerals ?? baseGenerals
+  let initialUnlocked = saved?.unlockedGenerals ?? baseUnlocked
+  let initialResources = saved?.resources ?? baseResources
   const initialTimestamp = saved?.lastSaveTimestamp ?? Date.now()
   const initialPlayTime = saved?.totalPlayTime ?? 0
-  const initialOrder = saved?.generalsOrder ?? baseOrder
+  let initialOrder = saved?.generalsOrder ?? baseOrder
+
+  // Migration: if no generals owned, give starter general
+  const hasAnyOwned = Object.values(initialOwned).some((o) => o.isOwned)
+  if (saved && !hasAnyOwned) {
+    initialOwned = baseGenerals
+    initialUnlocked = baseUnlocked
+    initialResources = baseResources
+    initialOrder = baseOrder
+  }
 
   return {
     resources: initialResources,
@@ -224,10 +238,16 @@ export const useGameStore = create<GameState>()((set, get) => {
 
     reset: () => {
       clearSave()
+      const resetGenerals = getInitialGenerals()
+      resetGenerals['prokladov'] = {
+        ...resetGenerals['prokladov'],
+        isOwned: true,
+        isActive: true,
+      }
       set({
-        resources: { tushonka: 10, medals: 0 },
-        ownedGenerals: getInitialGenerals(),
-        unlockedGenerals: [],
+        resources: { tushonka: 30, medals: 0 },
+        ownedGenerals: resetGenerals,
+        unlockedGenerals: ['prokladov'],
         activeEvent: null,
         lastSaveTimestamp: Date.now(),
         totalPlayTime: 0,
