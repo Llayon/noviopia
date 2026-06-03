@@ -11,6 +11,11 @@ export function saveGame(state: GameState): void {
       lastSaveTimestamp: Date.now(),
       totalPlayTime: state.totalPlayTime,
       generalsOrder: state.generalsOrder,
+      dayCounter: state.dayCounter,
+      dayTimer: state.dayTimer,
+      dayStartTushonka: state.dayStartTushonka,
+      dayContractsCompleted: state.dayContractsCompleted,
+      dayContractsFailed: state.dayContractsFailed,
     })
     localStorage.setItem(SAVE_KEY, data)
   } catch {

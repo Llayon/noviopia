@@ -5,10 +5,12 @@ import {
   ActiveContract,
   RANK_MULTIPLIERS,
   MAX_LOYALTY,
+  DAY_LENGTH_SEC,
+  DayReport,
 } from '../types/game'
 import allGenerals, { getGeneral } from '../data/generals'
 import { saveGame, loadSave, clearSave } from './save'
-import { generateRandomEvent, contractFailEvent } from '../game/events'
+import { generateRandomEvent, contractFailEvent, getDayEvent } from '../game/events'
 import contracts, { getContract } from '../data/contracts'
 
 let contractIdCounter = 0
@@ -117,6 +119,17 @@ export const useGameStore = create<GameState>()((set, get) => {
     generalsOrder: initialOrder,
     contracts: initialContracts,
 
+    dayCounter: saved?.dayCounter ?? 1,
+    dayTimer: saved?.dayTimer ?? 0,
+    dayStartTushonka: saved?.dayStartTushonka ?? initialResources.tushonka,
+    dayContractsCompleted: saved?.dayContractsCompleted ?? 0,
+    dayContractsFailed: saved?.dayContractsFailed ?? 0,
+    dailyReport: null,
+
+    dismissReport: () => {
+      set({ dailyReport: null })
+    },
+
     buyGeneral: (id: string) => {
       const state = get()
       const general = getGeneral(id)
@@ -217,16 +230,44 @@ export const useGameStore = create<GameState>()((set, get) => {
         }
       }
 
-      // Check completed contracts
       const now = Date.now()
+
       const newContracts = state.contracts.map((ac) => {
         if (!ac.completed && now >= ac.endTime) {
-          const chance = calcSuccessChance(ac.generalId, ac.contractId)
-          const success = Math.random() < chance
+          const success = Math.random() < calcSuccessChance(ac.generalId, ac.contractId)
           return { ...ac, completed: true, success }
         }
         return ac
       })
+
+      const newlyCompleted = newContracts.filter(
+        (ac, i) => ac.completed && !state.contracts[i].completed,
+      )
+      const newSuccesses = newlyCompleted.filter((ac) => ac.success).length
+      const newFailures = newlyCompleted.filter((ac) => !ac.success).length
+
+      const newDayTimer = state.dayTimer + deltaSeconds
+      let dayTimer = newDayTimer
+      let dayCounter = state.dayCounter
+      let dayContractsCompleted = state.dayContractsCompleted + newSuccesses
+      let dayContractsFailed = state.dayContractsFailed + newFailures
+      let dailyReport: DayReport | null = null
+      let dayStartTushonka = state.dayStartTushonka
+
+      if (newDayTimer >= DAY_LENGTH_SEC) {
+        dayCounter = state.dayCounter + 1
+        dayTimer = 0
+        dailyReport = {
+          tushonkaEarned: Math.round((state.resources.tushonka - state.dayStartTushonka) * 100) / 100,
+          contractsCompleted: dayContractsCompleted,
+          contractsFailed: dayContractsFailed,
+          eventsHandled: 0,
+          dayNumber: state.dayCounter,
+        }
+        dayContractsCompleted = 0
+        dayContractsFailed = 0
+        dayStartTushonka = state.resources.tushonka + income * deltaSeconds
+      }
 
       set({
         resources: {
@@ -236,9 +277,22 @@ export const useGameStore = create<GameState>()((set, get) => {
         ownedGenerals: newGenerals,
         totalPlayTime: state.totalPlayTime + deltaSeconds,
         contracts: newContracts,
+        dayCounter,
+        dayTimer,
+        dailyReport,
+        dayContractsCompleted,
+        dayContractsFailed,
+        dayStartTushonka,
       })
 
       saveGame(get())
+
+      if (dailyReport) {
+        const dayEvent = getDayEvent(dayCounter)
+        if (dayEvent) {
+          get().triggerEvent(dayEvent)
+        }
+      }
     },
 
     resolveEvent: (choiceIndex: number) => {
@@ -366,6 +420,12 @@ export const useGameStore = create<GameState>()((set, get) => {
         totalPlayTime: 0,
         generalsOrder: allGenerals.map((g) => g.id),
         contracts: [],
+        dayCounter: 1,
+        dayTimer: 0,
+        dayStartTushonka: 30,
+        dayContractsCompleted: 0,
+        dayContractsFailed: 0,
+        dailyReport: null,
       })
     },
   }

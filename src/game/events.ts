@@ -239,3 +239,63 @@ export function contractFailEvent(
 export function getEventById(id: string): GameEvent | undefined {
   return allEvents.find((e) => e.id === e.id)
 }
+
+const dayEvents: Record<number, GameEvent> = {
+  7: {
+    id: 'weekly_inspection',
+    title: 'Еженедельная инспекция',
+    description: 'Министерство обороны Лаоса проводит еженедельную проверку складов. Всё должно быть идеально — или вы лишитесь довольствия на месяц!',
+    type: 'inspection',
+    duration: 25,
+    choices: [
+      {
+        label: 'Подготовить склады заранее',
+        description: 'Вложить тушенку в наведение марафета на складах',
+        tushonkaCost: 80,
+        loyaltyChange: 5,
+      },
+      {
+        label: 'Дать инспекторам «премию»',
+        description: 'Каждому по ящику тушенки — и вопрос решён',
+        tushonkaCost: 120,
+      },
+      {
+        label: 'Сказать, что проверка не запланирована',
+        description: 'Хамовато, но сработает, если повезёт',
+        loyaltyChange: -10,
+      },
+    ],
+  },
+  30: {
+    id: 'big_revision',
+    title: 'Большая ревизия!',
+    description: 'Генеральный штаб прислал комиссию с полной ревизией всех активов. Цифры должны сойтись до последней банки!',
+    type: 'inspection',
+    duration: 30,
+    choices: [
+      {
+        label: 'Одолжить тушенку у соседнего округа',
+        description: 'Занять тушенку, чтобы закрыть недостачу. Придётся отдать с процентами.',
+        tushonkaCost: 200,
+        medalsReward: 1,
+      },
+      {
+        label: 'Подделать отчётность',
+        description: 'Грамотный бухгалтер решит любую проблему с цифрами',
+        tushonkaCost: 100,
+        loyaltyChange: -3,
+      },
+      {
+        label: 'Сжечь старые отчёты',
+        description: 'Нет бумаг — нет проблем. Радикально, но действенно.',
+        tushonkaCost: 50,
+      },
+    ],
+  },
+}
+
+export function getDayEvent(dayNumber: number): GameEvent | null {
+  const event = dayEvents[dayNumber]
+  if (!event) return null
+  return { ...event, choices: [...event.choices] }
+}

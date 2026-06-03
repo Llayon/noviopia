@@ -6,6 +6,7 @@ export default function HUD() {
   const resources = useGameStore((s) => s.resources)
   const ownedGenerals = useGameStore((s) => s.ownedGenerals)
   const contracts = useGameStore((s) => s.contracts)
+  const dayCounter = useGameStore((s) => s.dayCounter)
   const ownedCount = Object.values(ownedGenerals).filter((o) => o.isOwned).length
   const totalCount = Object.keys(ownedGenerals).length
 
@@ -33,6 +34,10 @@ export default function HUD() {
       <div className="hud-item">
         <span className="hud-icon">🏅</span>
         <span className="hud-value">{resources.medals}</span>
+      </div>
+      <div className="hud-item hud-day">
+        <span className="hud-day-label">День</span>
+        <span className="hud-day-value">{dayCounter}</span>
       </div>
       <div className="hud-item hud-income">
         <span>+{income.toFixed(1)}/с</span>

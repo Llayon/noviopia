@@ -82,6 +82,13 @@ export interface GameState {
   generalsOrder: string[]
   contracts: ActiveContract[]
 
+  dayCounter: number
+  dayTimer: number
+  dailyReport: DayReport | null
+  dayStartTushonka: number
+  dayContractsCompleted: number
+  dayContractsFailed: number
+
   buyGeneral: (id: string) => boolean
   feedGeneral: (id: string) => boolean
   upgradeGeneral: (id: string) => boolean
@@ -90,6 +97,7 @@ export interface GameState {
   resolveEvent: (choiceIndex: number) => void
   triggerEvent: (customEvent?: GameEvent) => void
   reset: () => void
+  dismissReport: () => void
 
   startContract: (contractId: string, generalId: string) => boolean
   claimContract: (activeId: string) => void
@@ -113,3 +121,12 @@ export const RARITY_COLORS: Record<Rarity, string> = {
 export const RANK_MULTIPLIERS = [1, 1.5, 2.5, 4, 7]
 export const MAX_LOYALTY = 100
 export const TICK_INTERVAL_MS = 1000
+export const DAY_LENGTH_SEC = 90
+
+export interface DayReport {
+  tushonkaEarned: number
+  contractsCompleted: number
+  contractsFailed: number
+  eventsHandled: number
+  dayNumber: number
+}

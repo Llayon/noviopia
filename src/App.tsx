@@ -3,6 +3,7 @@ import MainScreen from './components/MainScreen'
 import Collection from './components/Collection'
 import GeneralDetail from './components/GeneralDetail'
 import EventPopup from './components/EventPopup'
+import DailyReport from './components/DailyReport'
 import ContractScreen from './components/ContractScreen'
 import { startGameLoop, stopGameLoop } from './game/GameLoop'
 import { useGameStore } from './store/gameStore'
@@ -72,6 +73,7 @@ export default function App() {
         <GeneralDetail generalId={selectedGeneral} onNavigate={setPage} />
       )}
       {page === 'contracts' && <ContractScreen onNavigate={setPage} />}
+      <DailyReport />
       {activeEvent && <EventPopup />}
     </div>
   )

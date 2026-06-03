@@ -717,6 +717,100 @@ body {
   to { transform: rotate(360deg); }
 }
 
+/* ── Daily Report ── */
+.daily-report {
+  background: var(--bg-card);
+  border: 3px solid var(--accent);
+  padding: 20px;
+  max-width: 360px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.report-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.report-icon {
+  font-size: 36px;
+}
+
+.report-title {
+  font-size: 11px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.report-day {
+  font-size: 8px;
+  color: var(--text-dim);
+}
+
+.report-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.report-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.report-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.report-stat-label {
+  color: var(--text-dim);
+}
+
+.report-stat-value {
+  font-weight: bold;
+}
+
+.report-tip {
+  font-size: 7px;
+  color: var(--text-dim);
+  text-align: center;
+  line-height: 1.6;
+  padding: 8px 0;
+  font-style: italic;
+}
+
+.report-continue {
+  width: 100%;
+  padding: 10px;
+  font-size: 8px;
+}
+
+/* ── Day Counter ── */
+.hud-day {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hud-day-label {
+  font-size: 6px;
+  color: var(--text-dim);
+}
+
+.hud-day-value {
+  font-size: 9px;
+  color: var(--gold);
+}
+
 .stat-line {
   display: flex;
   justify-content: space-between;
