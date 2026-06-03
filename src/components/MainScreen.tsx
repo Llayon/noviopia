@@ -1,8 +1,18 @@
+import { lazy, Suspense } from 'react'
 import { useGameStore } from '../store/gameStore'
-import PixiCanvas from '../game/pixi/PixiCanvas'
 import HUD from './HUD'
 import { getGeneral } from '../data/generals'
 import { RANK_NAMES, RARITY_COLORS } from '../types/game'
+
+const PixiCanvas = lazy(() => import('../game/pixi/PixiCanvas'))
+
+function PortraitLoader() {
+  return (
+    <div className="portrait-placeholder">
+      <div className="pulse-box" style={{ width: 256, height: 256 }} />
+    </div>
+  )
+}
 
 export default function MainScreen({ onNavigate }: { onNavigate: (page: string) => void }) {
   const ownedGenerals = useGameStore((s) => s.ownedGenerals)
@@ -19,7 +29,9 @@ export default function MainScreen({ onNavigate }: { onNavigate: (page: string) 
         <div className="portrait-area">
           {activeGeneral && activeOwned ? (
             <>
-              <PixiCanvas />
+              <Suspense fallback={<PortraitLoader />}>
+                <PixiCanvas />
+              </Suspense>
               <div className="general-name">
                 {activeGeneral.name}
               </div>

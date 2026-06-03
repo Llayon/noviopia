@@ -31,3 +31,5 @@ dist-ssr
 # Telegram bot
 telegram-bot/node_modules/
 telegram-bot/.env
+
+.vercel

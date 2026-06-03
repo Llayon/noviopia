@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
 :root {
   --bg: #1a1a2e;
   --bg-card: #16213e;
@@ -491,4 +489,21 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--bg-surface);
+}
+
+.portrait-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pulse-box {
+  background: var(--bg-surface);
+  border: 2px solid var(--text-dim);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
 }
