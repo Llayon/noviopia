@@ -1,0 +1,494 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --bg: #1a1a2e;
+  --bg-card: #16213e;
+  --bg-surface: #0f3460;
+  --accent: #e94560;
+  --gold: #ffd700;
+  --text: #e0e0e0;
+  --text-dim: #888;
+  --pixel-font: 'Press Start 2P', monospace;
+  --border: 3px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--pixel-font);
+  font-size: 8px;
+  line-height: 1.6;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  image-rendering: pixelated;
+}
+
+#app {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.app {
+  width: 100%;
+  max-width: 420px;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  overflow-y: auto;
+}
+
+/* ── HUD ── */
+.hud {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: var(--bg-card);
+  border: var(--border) solid var(--bg-surface);
+  padding: 8px 4px;
+  margin-bottom: 8px;
+  gap: 4px;
+}
+
+.hud-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hud-icon {
+  font-size: 12px;
+}
+
+.hud-value {
+  font-size: 9px;
+  color: var(--gold);
+}
+
+.hud-income {
+  color: #4caf50;
+  font-size: 7px;
+}
+
+.hud-collection {
+  font-size: 7px;
+  color: var(--text-dim);
+}
+
+/* ── Main Screen ── */
+.warehouse-bg {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: var(--border) solid var(--bg-surface);
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.portrait-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.general-name {
+  font-size: 10px;
+  text-align: center;
+  color: var(--gold);
+}
+
+.general-rank {
+  font-size: 7px;
+}
+
+.loyalty-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 256px;
+}
+
+.loyalty-label {
+  font-size: 6px;
+  white-space: nowrap;
+  color: var(--text-dim);
+}
+
+.loyalty-bar {
+  flex: 1;
+  height: 8px;
+  background: #333;
+  border: 1px solid #555;
+  position: relative;
+}
+
+.loyalty-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #e53935, #fb8c00, #4caf50);
+  transition: width 0.5s ease;
+}
+
+.loyalty-text {
+  font-size: 6px;
+  min-width: 24px;
+  text-align: right;
+}
+
+.no-general {
+  text-align: center;
+  padding: 32px;
+}
+
+.shelf-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.hint {
+  font-size: 6px;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+
+/* ── Buttons ── */
+.nav-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.btn {
+  font-family: var(--pixel-font);
+  font-size: 7px;
+  padding: 6px 10px;
+  border: 2px solid var(--bg-surface);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.1s;
+  color: var(--text);
+  background: var(--bg-surface);
+  image-rendering: pixelated;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: #c62828;
+}
+
+.btn-secondary {
+  background: #1565c0;
+  border-color: #0d47a1;
+}
+
+.btn-feed {
+  background: #2e7d32;
+  border-color: #1b5e20;
+}
+
+.btn-upgrade {
+  background: #6a1b9a;
+  border-color: #4a148c;
+}
+
+.btn-back {
+  background: transparent;
+  border: none;
+  font-size: 8px;
+  padding: 4px 8px;
+}
+
+.btn-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.btn-buy {
+  font-size: 7px;
+  padding: 4px 8px;
+  background: #e65100;
+  border-color: #bf360c;
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* ── Collection ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.page-header h2 {
+  font-size: 9px;
+  flex: 1;
+}
+
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding-bottom: 12px;
+}
+
+.collection-card {
+  background: var(--bg-card);
+  border: 2px solid var(--bg-surface);
+  padding: 8px 4px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.1s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.collection-card:active {
+  transform: scale(0.96);
+}
+
+.collection-card.locked {
+  opacity: 0.7;
+}
+
+.card-rarity-bar {
+  height: 3px;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.card-icon {
+  font-size: 20px;
+}
+
+.card-name {
+  font-size: 6px;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.card-rank {
+  font-size: 5px;
+}
+
+.card-level {
+  font-size: 6px;
+  color: var(--gold);
+}
+
+/* ── Detail ── */
+.detail-card {
+  background: var(--bg-card);
+  border: 2px solid var(--bg-surface);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-description {
+  font-size: 7px;
+  line-height: 1.6;
+  color: var(--text-dim);
+  font-style: italic;
+  padding: 8px;
+  background: rgba(0,0,0,0.2);
+  border-left: 2px solid var(--accent);
+}
+
+.stats-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-label {
+  font-size: 6px;
+  width: 60px;
+  text-align: right;
+  color: var(--text-dim);
+}
+
+.stat-track {
+  flex: 1;
+  height: 8px;
+  background: #222;
+  border: 1px solid #444;
+}
+
+.stat-fill {
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.stat-value {
+  font-size: 7px;
+  width: 20px;
+  text-align: right;
+}
+
+.detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 7px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.detail-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-actions .btn {
+  width: 100%;
+  text-align: center;
+}
+
+/* ── Event Popup ── */
+.event-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.event-popup {
+  background: var(--bg-card);
+  border: 3px solid var(--accent);
+  padding: 16px;
+  max-width: 360px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.event-icon {
+  font-size: 32px;
+  text-align: center;
+}
+
+.event-title {
+  font-size: 9px;
+  text-align: center;
+  color: var(--accent);
+}
+
+.event-description {
+  font-size: 7px;
+  line-height: 1.7;
+  color: var(--text);
+  text-align: center;
+}
+
+.event-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-choice {
+  text-align: left;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--bg-surface);
+  border: 2px solid transparent;
+  font-size: 6px;
+}
+
+.btn-choice:active {
+  border-color: var(--accent);
+}
+
+.choice-label {
+  font-size: 7px;
+  color: var(--gold);
+}
+
+.choice-desc {
+  font-size: 6px;
+  color: var(--text-dim);
+}
+
+.choice-cost {
+  font-size: 6px;
+  color: #e53935;
+}
+
+.choice-reward {
+  font-size: 6px;
+  color: #4caf50;
+}
+
+/* ── Empty ── */
+.empty-state {
+  text-align: center;
+  padding: 48px;
+  font-size: 8px;
+  color: var(--text-dim);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-surface);
+}
