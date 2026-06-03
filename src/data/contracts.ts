@@ -1,0 +1,82 @@
+import { Contract } from '../types/game'
+
+const contracts: Contract[] = [
+  {
+    id: 'contract_1',
+    name: 'Поставка тушенки в/ч №731',
+    description: 'Обеспечить личный состав стратегическим запасом тушенки. Часть денег можно «оптимизировать».',
+    durationSec: 30,
+    reward: 50,
+    risk: 0.1,
+    requiredStats: { theft: 2, stealth: 1 },
+  },
+  {
+    id: 'contract_2',
+    name: 'Освоение бюджета на ремонт казарм',
+    description: 'Бюджет выделен, ремонт — понятие растяжимое. Главное — отчитаться.',
+    durationSec: 60,
+    reward: 120,
+    risk: 0.15,
+    requiredStats: { theft: 3, speed: 2 },
+  },
+  {
+    id: 'contract_3',
+    name: 'Тендер на сухпайки для учений «Восток»',
+    description: 'Крупный тендер. Победитель получает всё. Остальные — прокурорскую проверку.',
+    durationSec: 120,
+    reward: 300,
+    risk: 0.25,
+    requiredStats: { theft: 5, stealth: 3 },
+  },
+  {
+    id: 'contract_4',
+    name: 'Реконструкция склада ГСМ',
+    description: 'Горюче-смазочные материалы можно заменить тушенкой. Никто не заметит. Наверное.',
+    durationSec: 180,
+    reward: 500,
+    risk: 0.3,
+    requiredStats: { theft: 6, stealth: 4 },
+  },
+  {
+    id: 'contract_5',
+    name: 'Списание списанного',
+    description: 'Всё уже списано, но можно списать ещё раз. Бюрократия — наше всё.',
+    durationSec: 60,
+    reward: 80,
+    risk: 0.08,
+    requiredStats: { stealth: 2 },
+  },
+  {
+    id: 'contract_6',
+    name: 'Утилизация просрочки',
+    description: 'Просроченную тушенку надо утилизировать. Или переклеить этикетки и продать.',
+    durationSec: 240,
+    reward: 800,
+    risk: 0.35,
+    requiredStats: { theft: 8, speed: 5, stealth: 3 },
+  },
+  {
+    id: 'contract_7',
+    name: 'Оборонный заказ: премиум-тушенка',
+    description: 'Элитная тушенка для высшего командования. Контракт века!',
+    durationSec: 300,
+    reward: 1500,
+    risk: 0.4,
+    requiredStats: { theft: 10, stealth: 6, loyalty: 5 },
+  },
+  {
+    id: 'contract_8',
+    name: 'Международный экспорт тушенки',
+    description: 'Дружественная страна заказала вагон тушенки. По пути «потеряется» половина.',
+    durationSec: 600,
+    reward: 5000,
+    risk: 0.5,
+    requiredStats: { theft: 12, stealth: 8, speed: 6 },
+  },
+]
+
+export default contracts
+
+export function getContract(id: string): Contract | undefined {
+  return contracts.find((c) => c.id === id)
+}

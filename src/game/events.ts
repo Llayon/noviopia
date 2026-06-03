@@ -205,6 +205,37 @@ export function generateRandomEvent(): GameEvent | null {
   return { ...allEvents[idx], choices: [...allEvents[idx].choices] }
 }
 
+export function contractFailEvent(
+  contract: { name: string },
+  general?: { name: string },
+): GameEvent {
+  return {
+    id: 'contract_fail',
+    title: 'Контракт провален!',
+    description: `${general?.name ?? 'Генерал'} не справился с контрактом «${contract.name}». Прокуратура уже в курсе. Придётся откупаться.`,
+    type: 'inspection',
+    duration: 25,
+    choices: [
+      {
+        label: 'Откупиться тушенкой',
+        description: 'Заплатить штраф и забыть. Дорого, но эффективно.',
+        tushonkaCost: 100,
+      },
+      {
+        label: 'Свалить вину на подчинённых',
+        description: 'Найти козла отпущения. Лояльность генералов упадёт.',
+        loyaltyChange: -10,
+      },
+      {
+        label: 'Замять через связи',
+        description: 'Вспомнить старых друзей. Медали пригодятся.',
+        medalsCost: 1,
+        loyaltyChange: 5,
+      },
+    ],
+  }
+}
+
 export function getEventById(id: string): GameEvent | undefined {
-  return allEvents.find((e) => e.id === id)
+  return allEvents.find((e) => e.id === e.id)
 }

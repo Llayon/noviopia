@@ -70,6 +70,9 @@ export default function MainScreen({ onNavigate }: { onNavigate: (page: string) 
             Генерал
           </button>
         )}
+        <button className="btn btn-contract" onClick={() => onNavigate('contracts')}>
+          Контракты
+        </button>
         {activeGeneral && activeOwned && (
           <FeedButton generalId={activeGeneral.id} />
         )}

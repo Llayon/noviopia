@@ -5,6 +5,7 @@ import { RANK_MULTIPLIERS, MAX_LOYALTY } from '../types/game'
 export default function HUD() {
   const resources = useGameStore((s) => s.resources)
   const ownedGenerals = useGameStore((s) => s.ownedGenerals)
+  const contracts = useGameStore((s) => s.contracts)
   const ownedCount = Object.values(ownedGenerals).filter((o) => o.isOwned).length
   const totalCount = Object.keys(ownedGenerals).length
 
@@ -14,8 +15,14 @@ export default function HUD() {
     if (!g) return acc
     const rankMult = RANK_MULTIPLIERS[owned.rankIndex] ?? 1
     const loyaltyMult = owned.loyalty / MAX_LOYALTY
-    return acc + g.incomePerSec * rankMult * loyaltyMult * owned.level
+
+    const isBusy = contracts.some((c) => c.generalId === id && !c.completed)
+    const mult = isBusy ? 0.25 : 1
+
+    return acc + g.incomePerSec * rankMult * loyaltyMult * owned.level * mult
   }, 0)
+
+  const activeCount = contracts.filter((c) => !c.completed).length
 
   return (
     <div className="hud">
@@ -35,6 +42,11 @@ export default function HUD() {
           {ownedCount}/{totalCount}
         </span>
       </div>
+      {activeCount > 0 && (
+        <div className="hud-item">
+          <span className="hud-contracts">📋{activeCount}</span>
+        </div>
+      )}
     </div>
   )
 }

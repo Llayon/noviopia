@@ -3,10 +3,11 @@ import MainScreen from './components/MainScreen'
 import Collection from './components/Collection'
 import GeneralDetail from './components/GeneralDetail'
 import EventPopup from './components/EventPopup'
+import ContractScreen from './components/ContractScreen'
 import { startGameLoop, stopGameLoop } from './game/GameLoop'
 import { useGameStore } from './store/gameStore'
 
-type Page = 'main' | 'collection' | 'detail'
+type Page = 'main' | 'collection' | 'detail' | 'contracts'
 
 declare global {
   interface Window {
@@ -56,6 +57,7 @@ export default function App() {
       {page === 'detail' && (
         <GeneralDetail generalId={selectedGeneral} onNavigate={setPage} />
       )}
+      {page === 'contracts' && <ContractScreen onNavigate={setPage} />}
       {activeEvent && <EventPopup />}
     </div>
   )

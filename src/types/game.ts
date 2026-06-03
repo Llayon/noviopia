@@ -33,6 +33,26 @@ export interface GameResources {
   medals: number
 }
 
+export interface Contract {
+  id: string
+  name: string
+  description: string
+  durationSec: number
+  reward: number
+  risk: number
+  requiredStats: Partial<GeneralStats>
+}
+
+export interface ActiveContract {
+  id: string
+  contractId: string
+  generalId: string
+  startTime: number
+  endTime: number
+  completed: boolean
+  success: boolean
+}
+
 export interface GameEvent {
   id: string
   title: string
@@ -60,6 +80,7 @@ export interface GameState {
   lastSaveTimestamp: number
   totalPlayTime: number
   generalsOrder: string[]
+  contracts: ActiveContract[]
 
   buyGeneral: (id: string) => boolean
   feedGeneral: (id: string) => boolean
@@ -67,8 +88,11 @@ export interface GameState {
   setActiveGeneral: (id: string) => void
   tick: (deltaSeconds: number) => void
   resolveEvent: (choiceIndex: number) => void
-  triggerEvent: () => void
+  triggerEvent: (customEvent?: GameEvent) => void
   reset: () => void
+
+  startContract: (contractId: string, generalId: string) => boolean
+  claimContract: (activeId: string) => void
 }
 
 export const RANK_NAMES: Record<Rank, string> = {
