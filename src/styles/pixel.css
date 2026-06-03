@@ -677,6 +677,12 @@ body {
   color: var(--text-dim);
 }
 
+.general-option-stress {
+  font-size: 6px;
+  min-width: 24px;
+  text-align: right;
+}
+
 .modal-actions {
   display: flex;
   gap: 8px;

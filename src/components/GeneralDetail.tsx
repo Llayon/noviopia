@@ -5,6 +5,7 @@ import {
   RARITY_COLORS,
   RANK_MULTIPLIERS,
   MAX_LOYALTY,
+  MAX_STRESS,
 } from '../types/game'
 
 export default function GeneralDetail({
@@ -81,6 +82,7 @@ export default function GeneralDetail({
           <StatBar label="Скорость" value={general.stats.speed} max={15} color="#1e88e5" />
           <StatBar label="Маскировка" value={general.stats.stealth} max={15} color="#43a047" />
           <StatBar label="Лояльность" value={Math.floor(owned.loyalty)} max={MAX_LOYALTY} color="#fb8c00" />
+          <StatBar label="Стресс" value={Math.floor(owned.stress)} max={MAX_STRESS} color="#e53935" />
         </div>
 
         <div className="detail-info">

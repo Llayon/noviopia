@@ -5,6 +5,9 @@ import {
   ActiveContract,
   RANK_MULTIPLIERS,
   MAX_LOYALTY,
+  MAX_STRESS,
+  STRESS_PER_SEC,
+  STRESS_DECAY_PER_SEC,
   DAY_LENGTH_SEC,
   DayReport,
 } from '../types/game'
@@ -23,6 +26,7 @@ function getInitialGenerals(): Record<string, OwnedGeneral> {
       level: 1,
       rankIndex: 0,
       loyalty: MAX_LOYALTY,
+      stress: 0,
       isOwned: false,
       isActive: false,
     }
@@ -36,7 +40,7 @@ function calcIncome(
   activeContracts: ActiveContract[],
 ): number {
   const busyGenerals = new Set(
-    activeContracts.filter((c) => !c.completed).map((c) => c.generalId),
+    activeContracts.filter((c) => !c.completed).flatMap((c) => c.generalIds),
   )
 
   let total = 0
@@ -46,43 +50,39 @@ function calcIncome(
     if (!g) continue
     const rankMult = RANK_MULTIPLIERS[entry.rankIndex] ?? 1
     const loyaltyMult = entry.loyalty / MAX_LOYALTY
+    const stressPenalty = 1 - (entry.stress / MAX_STRESS) * 0.5
 
     if (busyGenerals.has(entry.generalId)) {
-      total += g.incomePerSec * rankMult * loyaltyMult * entry.level * 0.25
+      total += g.incomePerSec * rankMult * loyaltyMult * entry.level * 0.25 * stressPenalty
     } else {
-      total += g.incomePerSec * rankMult * loyaltyMult * entry.level
+      total += g.incomePerSec * rankMult * loyaltyMult * entry.level * stressPenalty
     }
   }
   return total
 }
 
-function calcSuccessChance(generalId: string, contractId: string): number {
-  const g = getGeneral(generalId)
+function calcSuccessChance(generalIds: string[], contractId: string, ownedGenerals: Record<string, OwnedGeneral>): number {
   const c = getContract(contractId)
-  if (!g || !c) return 0
+  if (!c || generalIds.length === 0) return 0
 
-  const stats: Record<string, number> = {
-    theft: g.stats.theft,
-    speed: g.stats.speed,
-    stealth: g.stats.stealth,
-    loyalty: g.stats.loyalty,
-  }
+  const required = Object.values(c.requiredStats).reduce((sum, v) => sum + (v as number), 0)
+  if (required === 0) return 0.9
 
-  let score = 0
-  let required = 0
-  let count = 0
+  let totalScore = 0
+  generalIds.forEach((gid, i) => {
+    const g = getGeneral(gid)
+    const owned = ownedGenerals[gid]
+    if (!g || !owned) return
 
-  for (const [stat, val] of Object.entries(c.requiredStats)) {
-    required += val as number
-    score += stats[stat] ?? 0
-    count++
-  }
+    const statSum = g.stats.theft + g.stats.speed + g.stats.stealth + g.stats.loyalty
+    const stressPenalty = 1 - (owned.stress / MAX_STRESS) * 0.3
+    const diminishing = 1 / Math.pow(2, i)
 
-  if (count === 0) return 0.9
+    totalScore += statSum * stressPenalty * diminishing
+  })
 
-  const ratio = count > 0 ? score / required : 1
-  const costMult = 1 + (g.cost / 500) * 0.3
-  return Math.min(0.95, ratio * costMult * 0.15)
+  const ratio = totalScore / required
+  return Math.min(0.95, ratio * 0.15)
 }
 
 export const useGameStore = create<GameState>()((set, get) => {
@@ -218,23 +218,31 @@ export const useGameStore = create<GameState>()((set, get) => {
 
     tick: (deltaSeconds: number) => {
       const state = get()
-      const income = calcIncome(state.ownedGenerals, state.contracts)
+
+      const busyGenerals = new Set(
+        state.contracts.filter((c) => !c.completed).flatMap((c) => c.generalIds),
+      )
 
       const newGenerals = { ...state.ownedGenerals }
       for (const [id, owned] of Object.entries(state.ownedGenerals)) {
         if (owned.isOwned) {
+          const stressChange = busyGenerals.has(id) ? STRESS_PER_SEC : -STRESS_DECAY_PER_SEC
+          const newStress = Math.max(0, Math.min(MAX_STRESS, owned.stress + stressChange * deltaSeconds))
           newGenerals[id] = {
             ...owned,
+            stress: Math.round(newStress * 100) / 100,
             loyalty: Math.max(0, Math.round((owned.loyalty - 0.1 * deltaSeconds) * 100) / 100),
           }
         }
       }
 
+      const income = calcIncome(newGenerals, state.contracts)
+
       const now = Date.now()
 
       const newContracts = state.contracts.map((ac) => {
         if (!ac.completed && now >= ac.endTime) {
-          const success = Math.random() < calcSuccessChance(ac.generalId, ac.contractId)
+          const success = Math.random() < calcSuccessChance(ac.generalIds, ac.contractId, newGenerals)
           return { ...ac, completed: true, success }
         }
         return ac
@@ -342,18 +350,21 @@ export const useGameStore = create<GameState>()((set, get) => {
       }
     },
 
-    startContract: (contractId: string, generalId: string) => {
+    startContract: (contractId: string, generalIds: string[]) => {
       const state = get()
-      const owned = state.ownedGenerals[generalId]
-      if (!owned || !owned.isOwned) return false
+      if (generalIds.length === 0) return false
 
       const c = getContract(contractId)
       if (!c) return false
 
-      const alreadyOnContract = state.contracts.some(
-        (ac) => ac.generalId === generalId && !ac.completed,
+      const busyGenerals = new Set(
+        state.contracts.filter((ac) => !ac.completed).flatMap((ac) => ac.generalIds),
       )
-      if (alreadyOnContract) return false
+
+      const allAvailable = generalIds.every(
+        (gid) => state.ownedGenerals[gid]?.isOwned && !busyGenerals.has(gid),
+      )
+      if (!allAvailable) return false
 
       contractIdCounter++
       const now = Date.now()
@@ -361,7 +372,7 @@ export const useGameStore = create<GameState>()((set, get) => {
       const newContract: ActiveContract = {
         id: `ac_${contractIdCounter}`,
         contractId,
-        generalId,
+        generalIds,
         startTime: now,
         endTime: now + c.durationSec * 1000,
         completed: false,
@@ -387,15 +398,26 @@ export const useGameStore = create<GameState>()((set, get) => {
       newContracts.splice(idx, 1)
 
       if (ac.success) {
+        const newGenerals = { ...state.ownedGenerals }
+        ac.generalIds.forEach((gid) => {
+          if (newGenerals[gid]) {
+            newGenerals[gid] = {
+              ...newGenerals[gid],
+              loyalty: Math.min(MAX_LOYALTY, newGenerals[gid].loyalty + 5),
+            }
+          }
+        })
         set({
           resources: {
             ...state.resources,
             tushonka: Math.round((state.resources.tushonka + c.reward) * 100) / 100,
           },
+          ownedGenerals: newGenerals,
           contracts: newContracts,
         })
       } else {
-        const failEvent = contractFailEvent(c, getGeneral(ac.generalId))
+        const firstGeneral = getGeneral(ac.generalIds[0])
+        const failEvent = contractFailEvent(c, firstGeneral)
         set({
           contracts: newContracts,
           activeEvent: failEvent,
@@ -410,6 +432,7 @@ export const useGameStore = create<GameState>()((set, get) => {
         ...resetGenerals['prokladov'],
         isOwned: true,
         isActive: true,
+        stress: 0,
       }
       set({
         resources: { tushonka: 30, medals: 0 },

@@ -24,6 +24,7 @@ export interface OwnedGeneral {
   level: number
   rankIndex: number
   loyalty: number
+  stress: number
   isOwned: boolean
   isActive: boolean
 }
@@ -46,7 +47,7 @@ export interface Contract {
 export interface ActiveContract {
   id: string
   contractId: string
-  generalId: string
+  generalIds: string[]
   startTime: number
   endTime: number
   completed: boolean
@@ -99,7 +100,7 @@ export interface GameState {
   reset: () => void
   dismissReport: () => void
 
-  startContract: (contractId: string, generalId: string) => boolean
+  startContract: (contractId: string, generalIds: string[]) => boolean
   claimContract: (activeId: string) => void
 }
 
@@ -120,6 +121,9 @@ export const RARITY_COLORS: Record<Rarity, string> = {
 
 export const RANK_MULTIPLIERS = [1, 1.5, 2.5, 4, 7]
 export const MAX_LOYALTY = 100
+export const MAX_STRESS = 100
+export const STRESS_PER_SEC = 0.15
+export const STRESS_DECAY_PER_SEC = 0.08
 export const TICK_INTERVAL_MS = 1000
 export const DAY_LENGTH_SEC = 90
 

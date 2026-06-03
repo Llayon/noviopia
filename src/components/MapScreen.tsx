@@ -14,7 +14,7 @@ export default function MapScreen({
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null)
   const [showContractModal, setShowContractModal] = useState(false)
   const [selectedContract, setSelectedContract] = useState<string | null>(null)
-  const [selectedGeneral, setSelectedGeneral] = useState<string | null>(null)
+  const [selectedGenerals, setSelectedGenerals] = useState<Set<string>>(new Set())
 
   const ownedGenerals = useGameStore((s) => s.ownedGenerals)
   const activeContracts = useGameStore((s) => s.contracts)
@@ -26,27 +26,28 @@ export default function MapScreen({
   )
 
   const busyGenerals = new Set(
-    activeContracts.filter((c) => !c.completed).map((c) => c.generalId),
+    activeContracts.filter((c) => !c.completed).flatMap((c) => c.generalIds),
   )
 
   const handleDistrictClick = (info: MapClickInfo) => {
     setSelectedDistrict(info.district.id)
   }
 
-  const assignedContracts = useMemo(() => {
-    const result: Record<string, number> = {}
-    contracts.forEach((c, i) => {
-      result[c.id] = i % 4
+  const toggleGeneral = (gid: string) => {
+    setSelectedGenerals((prev) => {
+      const next = new Set(prev)
+      if (next.has(gid)) next.delete(gid)
+      else next.add(gid)
+      return next
     })
-    return result
-  }, [])
+  }
 
   const handleStartContract = () => {
-    if (!selectedContract || !selectedGeneral) return
-    startContract(selectedContract, selectedGeneral)
+    if (!selectedContract || selectedGenerals.size === 0) return
+    startContract(selectedContract, [...selectedGenerals])
     setShowContractModal(false)
     setSelectedContract(null)
-    setSelectedGeneral(null)
+    setSelectedGenerals(new Set())
     setSelectedDistrict(null)
   }
 
@@ -104,13 +105,13 @@ export default function MapScreen({
           onClick={() => {
             setShowContractModal(false)
             setSelectedContract(null)
-            setSelectedGeneral(null)
+            setSelectedGenerals(new Set())
           }}
         >
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h3>Начать контракт</h3>
             <p className="modal-desc">
-              Выберите контракт и назначьте генерала
+              Выберите контракт и назначьте генералов
             </p>
 
             <div className="contract-select-list">
@@ -118,7 +119,10 @@ export default function MapScreen({
                 <div
                   key={c.id}
                   className={`contract-option ${selectedContract === c.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedContract(c.id)}
+                  onClick={() => {
+                    setSelectedContract(c.id)
+                    setSelectedGenerals(new Set())
+                  }}
                 >
                   <div className="contract-option-name">{c.name}</div>
                   <div className="contract-option-meta">
@@ -131,20 +135,26 @@ export default function MapScreen({
             {selectedContract && (
               <>
                 <div className="modal-divider" />
-                <p className="modal-desc">Назначить генерала:</p>
+                <p className="modal-desc">
+                  Выбрано: {selectedGenerals.size}. Нажмите на генералов для назначения:
+                </p>
                 <div className="general-list">
                   {ownedList
                     .filter((o) => !busyGenerals.has(o.generalId))
                     .map((o) => {
                       const g = getGeneral(o.generalId)
                       if (!g) return null
+                      const isSelected = selectedGenerals.has(o.generalId)
                       return (
                         <div
                           key={o.generalId}
-                          className={`general-option ${selectedGeneral === o.generalId ? 'selected' : ''}`}
-                          onClick={() => setSelectedGeneral(o.generalId)}
+                          className={`general-option ${isSelected ? 'selected' : ''}`}
+                          onClick={() => toggleGeneral(o.generalId)}
                         >
-                          {g.name}
+                          <span>{g.name}</span>
+                          <span className="general-option-stress" style={{ color: o.stress > 50 ? '#e53935' : o.stress > 25 ? '#fb8c00' : '#4caf50' }}>
+                            {Math.round(o.stress)}%
+                          </span>
                         </div>
                       )
                     })}
@@ -158,17 +168,17 @@ export default function MapScreen({
                 onClick={() => {
                   setShowContractModal(false)
                   setSelectedContract(null)
-                  setSelectedGeneral(null)
+                  setSelectedGenerals(new Set())
                 }}
               >
                 Отмена
               </button>
               <button
                 className="btn btn-primary"
-                disabled={!selectedContract || !selectedGeneral}
+                disabled={!selectedContract || selectedGenerals.size === 0}
                 onClick={handleStartContract}
               >
-                Начать
+                Начать ({selectedGenerals.size})
               </button>
             </div>
           </div>

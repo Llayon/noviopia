@@ -17,7 +17,7 @@ export default function HUD() {
     const rankMult = RANK_MULTIPLIERS[owned.rankIndex] ?? 1
     const loyaltyMult = owned.loyalty / MAX_LOYALTY
 
-    const isBusy = contracts.some((c) => c.generalId === id && !c.completed)
+    const isBusy = contracts.some((c) => !c.completed && c.generalIds.includes(id))
     const mult = isBusy ? 0.25 : 1
 
     return acc + g.incomePerSec * rankMult * loyaltyMult * owned.level * mult

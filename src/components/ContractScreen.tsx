@@ -15,7 +15,7 @@ export default function ContractScreen({
   const claimContract = useGameStore((s) => s.claimContract)
 
   const [selectedContract, setSelectedContract] = useState<string | null>(null)
-  const [selectedGeneral, setSelectedGeneral] = useState<string | null>(null)
+  const [selectedGenerals, setSelectedGenerals] = useState<Set<string>>(new Set())
   const [showAssign, setShowAssign] = useState(false)
 
   const ownedList = useMemo(
@@ -24,17 +24,27 @@ export default function ContractScreen({
   )
 
   const busyGenerals = new Set(
-    activeContracts.filter((c) => !c.completed).map((c) => c.generalId),
+    activeContracts.filter((c) => !c.completed).flatMap((c) => c.generalIds),
   )
 
+  const toggleGeneral = (gid: string) => {
+    setSelectedGenerals((prev) => {
+      const next = new Set(prev)
+      if (next.has(gid)) next.delete(gid)
+      else next.add(gid)
+      return next
+    })
+  }
+
   const handleStart = () => {
-    if (!selectedContract || !selectedGeneral) return
-    startContract(selectedContract, selectedGeneral)
+    if (!selectedContract || selectedGenerals.size === 0) return
+    startContract(selectedContract, [...selectedGenerals])
     setShowAssign(false)
-    setSelectedGeneral(null)
+    setSelectedGenerals(new Set())
   }
 
   const completedContracts = activeContracts.filter((c) => c.completed)
+  const activeList = activeContracts.filter((c) => !c.completed)
 
   return (
     <div className="page contract-page">
@@ -46,34 +56,32 @@ export default function ContractScreen({
       </div>
 
       {/* Active contracts */}
-      {activeContracts.filter((c) => !c.completed).length > 0 && (
+      {activeList.length > 0 && (
         <div className="contract-section">
           <h3 className="section-title">В процессе</h3>
-          {activeContracts
-            .filter((c) => !c.completed)
-            .map((ac) => {
-              const c = getContract(ac.contractId)
-              const g = getGeneral(ac.generalId)
-              const elapsed = Date.now() - ac.startTime
-              const total = (ac.endTime - ac.startTime) || 1
-              const pct = Math.min(100, Math.round((elapsed / total) * 100))
+          {activeList.map((ac) => {
+            const c = getContract(ac.contractId)
+            const gens = ac.generalIds.map((gid) => getGeneral(gid)).filter(Boolean)
+            const elapsed = Date.now() - ac.startTime
+            const total = (ac.endTime - ac.startTime) || 1
+            const pct = Math.min(100, Math.round((elapsed / total) * 100))
 
-              return (
-                <div key={ac.id} className="contract-card active">
-                  <div className="contract-name">{c?.name ?? '???'}</div>
-                  <div className="contract-general">
-                    Исполняет: {g?.name ?? '???'}
-                  </div>
-                  <div className="contract-progress-bar">
-                    <div
-                      className="contract-progress-fill"
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                  <div className="contract-progress-text">{pct}%</div>
+            return (
+              <div key={ac.id} className="contract-card active">
+                <div className="contract-name">{c?.name ?? '???'}</div>
+                <div className="contract-general">
+                  Исполняют: {gens.map((g) => g!.name).join(', ')}
                 </div>
-              )
-            })}
+                <div className="contract-progress-bar">
+                  <div
+                    className="contract-progress-fill"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+                <div className="contract-progress-text">{pct}%</div>
+              </div>
+            )
+          })}
         </div>
       )}
 
@@ -83,7 +91,7 @@ export default function ContractScreen({
           <h3 className="section-title">Завершено</h3>
           {completedContracts.map((ac) => {
             const c = getContract(ac.contractId)
-            const g = getGeneral(ac.generalId)
+            const gens = ac.generalIds.map((gid) => getGeneral(gid)).filter(Boolean)
             return (
               <div
                 key={ac.id}
@@ -92,7 +100,7 @@ export default function ContractScreen({
               >
                 <div className="contract-name">{c?.name ?? '???'}</div>
                 <div className="contract-general">
-                  {g?.name ?? '???'} — {ac.success ? '✅ Успех' : '❌ Провал'}
+                  {gens.map((g) => g!.name).join(', ')} — {ac.success ? '✅ Успех' : '❌ Провал'}
                 </div>
                 {ac.success && (
                   <div className="contract-reward">+{c?.reward ?? 0} 🥫</div>
@@ -121,6 +129,7 @@ export default function ContractScreen({
               onClick={() => {
                 if (!isInProgress) {
                   setSelectedContract(c.id)
+                  setSelectedGenerals(new Set())
                   setShowAssign(true)
                 }
               }}
@@ -145,23 +154,27 @@ export default function ContractScreen({
             <p className="modal-desc">
               {getContract(selectedContract)?.name}
             </p>
+            <p className="modal-desc">
+              Выбрано: {selectedGenerals.size}. Нажмите на генералов для назначения:
+            </p>
             <div className="general-list">
               {ownedList
                 .filter((o) => !busyGenerals.has(o.generalId))
                 .map((o) => {
                   const g = getGeneral(o.generalId)
                   if (!g) return null
+                  const isSelected = selectedGenerals.has(o.generalId)
                   return (
                     <div
                       key={o.generalId}
-                      className={`general-option ${selectedGeneral === o.generalId ? 'selected' : ''}`}
-                      onClick={() => setSelectedGeneral(o.generalId)}
+                      className={`general-option ${isSelected ? 'selected' : ''}`}
+                      onClick={() => toggleGeneral(o.generalId)}
                     >
                       <span style={{ color: RARITY_COLORS[g.rarity] }}>
                         {g.name}
                       </span>
                       <span className="general-option-rank">
-                        {RANK_NAMES[g.rank]}
+                        {RANK_NAMES[g.rank]} | Стресс {Math.round(o.stress)}%
                       </span>
                     </div>
                   )
@@ -180,10 +193,10 @@ export default function ContractScreen({
               </button>
               <button
                 className="btn btn-primary"
-                disabled={!selectedGeneral}
+                disabled={selectedGenerals.size === 0}
                 onClick={handleStart}
               >
-                Назначить
+                Назначить ({selectedGenerals.size})
               </button>
             </div>
           </div>
