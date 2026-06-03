@@ -9,7 +9,7 @@ const contracts: Contract[] = [
     reward: 50,
     risk: 0.1,
     requiredStats: { theft: 2, stealth: 1 },
-    maxGenerals: 1,
+    maxGenerals: 2,
   },
   {
     id: 'contract_2',
@@ -19,7 +19,7 @@ const contracts: Contract[] = [
     reward: 120,
     risk: 0.15,
     requiredStats: { theft: 3, speed: 2 },
-    maxGenerals: 1,
+    maxGenerals: 2,
   },
   {
     id: 'contract_3',
@@ -29,7 +29,7 @@ const contracts: Contract[] = [
     reward: 300,
     risk: 0.25,
     requiredStats: { theft: 5, stealth: 3 },
-    maxGenerals: 2,
+    maxGenerals: 3,
   },
   {
     id: 'contract_4',
@@ -39,7 +39,7 @@ const contracts: Contract[] = [
     reward: 500,
     risk: 0.3,
     requiredStats: { theft: 6, stealth: 4 },
-    maxGenerals: 2,
+    maxGenerals: 4,
   },
   {
     id: 'contract_5',
@@ -49,7 +49,7 @@ const contracts: Contract[] = [
     reward: 80,
     risk: 0.08,
     requiredStats: { stealth: 2 },
-    maxGenerals: 1,
+    maxGenerals: 2,
   },
   {
     id: 'contract_6',
@@ -59,7 +59,7 @@ const contracts: Contract[] = [
     reward: 800,
     risk: 0.35,
     requiredStats: { theft: 8, speed: 5, stealth: 3 },
-    maxGenerals: 2,
+    maxGenerals: 5,
   },
   {
     id: 'contract_7',
@@ -69,7 +69,7 @@ const contracts: Contract[] = [
     reward: 1500,
     risk: 0.4,
     requiredStats: { theft: 10, stealth: 6, loyalty: 5 },
-    maxGenerals: 3,
+    maxGenerals: 6,
   },
   {
     id: 'contract_8',
@@ -79,7 +79,28 @@ const contracts: Contract[] = [
     reward: 5000,
     risk: 0.5,
     requiredStats: { theft: 12, stealth: 8, speed: 6 },
-    maxGenerals: 3,
+    maxGenerals: 6,
+    exactFit: true,
+  },
+  {
+    id: 'contract_9',
+    name: 'Рейд на склад контрабанды',
+    description: 'По наводке — крупный склад левой тушенки. Нужна целая бригада: грузить, вывозить, заметать следы.',
+    durationSec: 180,
+    reward: 1200,
+    risk: 0.45,
+    requiredStats: { theft: 9, speed: 7, stealth: 5, loyalty: 3 },
+    maxGenerals: 6,
+  },
+  {
+    id: 'contract_10',
+    name: 'Освоение бюджета Минобороны',
+    description: 'Годовой бюджет министерства. Надо «освоить» так, чтобы никто не заметил. Тут без бригады не справиться.',
+    durationSec: 450,
+    reward: 3000,
+    risk: 0.55,
+    requiredStats: { theft: 14, speed: 8, stealth: 10, loyalty: 6 },
+    maxGenerals: 6,
     exactFit: true,
   },
 ]

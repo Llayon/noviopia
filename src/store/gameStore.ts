@@ -76,7 +76,7 @@ function calcSuccessChance(generalIds: string[], contractId: string, ownedGenera
 
     const statSum = g.stats.theft + g.stats.speed + g.stats.stealth + g.stats.loyalty
     const stressPenalty = 1 - (owned.stress / MAX_STRESS) * 0.3
-    const diminishing = 1 / Math.pow(2, i)
+    const diminishing = 1 / Math.pow(1.5, i)
 
     totalScore += statSum * stressPenalty * diminishing
   })
