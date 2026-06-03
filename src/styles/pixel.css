@@ -687,3 +687,97 @@ body {
   font-size: 7px;
   padding: 6px 12px;
 }
+
+/* ── Map Screen ── */
+.map-screen .map-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.district-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.loader {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--bg-surface);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.stat-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 7px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.completed-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  border: 2px solid #2e7d32;
+  padding: 8px 10px;
+  margin: 4px 0;
+  font-size: 7px;
+}
+
+.btn-small {
+  font-family: var(--pixel-font);
+  font-size: 6px;
+  padding: 4px 8px;
+  background: var(--bg-surface);
+  border: 2px solid var(--bg-surface);
+  cursor: pointer;
+  color: var(--text);
+}
+
+.contract-select-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+.contract-option {
+  padding: 8px;
+  background: var(--bg-surface);
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.contract-option.selected {
+  border-color: var(--gold);
+}
+
+.contract-option-name {
+  font-size: 7px;
+  margin-bottom: 2px;
+}
+
+.contract-option-meta {
+  font-size: 6px;
+  color: var(--text-dim);
+}
+
+.modal-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+  margin: 8px 0;
+}

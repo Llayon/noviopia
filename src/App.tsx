@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import MainScreen from './components/MainScreen'
 import Collection from './components/Collection'
 import GeneralDetail from './components/GeneralDetail'
@@ -7,7 +7,9 @@ import ContractScreen from './components/ContractScreen'
 import { startGameLoop, stopGameLoop } from './game/GameLoop'
 import { useGameStore } from './store/gameStore'
 
-type Page = 'main' | 'collection' | 'detail' | 'contracts'
+const MapScreen = lazy(() => import('./components/MapScreen'))
+
+type Page = 'main' | 'map' | 'collection' | 'detail' | 'contracts'
 
 declare global {
   interface Window {
@@ -30,7 +32,7 @@ declare global {
 }
 
 export default function App() {
-  const [page, setPage] = useState<string>('main')
+  const [page, setPage] = useState<string>('map')
   const [selectedGeneral, setSelectedGeneral] = useState<string | null>(null)
   const activeEvent = useGameStore((s) => s.activeEvent)
 
@@ -50,6 +52,18 @@ export default function App() {
 
   return (
     <div className="app">
+      {page === 'map' && (
+        <Suspense
+          fallback={
+            <div className="page" style={{ alignItems: 'center', justifyContent: 'center' }}>
+              <div className="loader" />
+              <p style={{ marginTop: 16, fontSize: 8 }}>Загрузка карты...</p>
+            </div>
+          }
+        >
+          <MapScreen onNavigate={setPage} />
+        </Suspense>
+      )}
       {page === 'main' && <MainScreen onNavigate={setPage} />}
       {page === 'collection' && (
         <Collection onNavigate={setPage} onSelectGeneral={handleSelectGeneral} />

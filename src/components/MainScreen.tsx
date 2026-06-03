@@ -62,7 +62,10 @@ export default function MainScreen({ onNavigate }: { onNavigate: (page: string) 
         </div>
       </div>
       <div className="nav-buttons">
-        <button className="btn btn-primary" onClick={() => onNavigate('collection')}>
+        <button className="btn btn-primary" onClick={() => onNavigate('map')}>
+          Карта
+        </button>
+        <button className="btn btn-secondary" onClick={() => onNavigate('collection')}>
           Коллекция
         </button>
         {activeGeneral && (
