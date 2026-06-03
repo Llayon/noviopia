@@ -152,7 +152,14 @@ export default function ContractScreen({
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h3>Назначить на контракт</h3>
             <p className="modal-desc">
-              {getContract(selectedContract)?.name}
+              {(() => {
+                const c = getContract(selectedContract)
+                if (!c) return ''
+                const slotLabel = c.exactFit
+                  ? `Требуется ровно ${c.maxGenerals} генерал${c.maxGenerals > 1 ? 'а' : ''} 🔴`
+                  : `Можно назначить до ${c.maxGenerals} генерал${c.maxGenerals > 1 ? 'ов' : 'а'}`
+                return `${c.name} — ${slotLabel}`
+              })()}
             </p>
             <p className="modal-desc">
               Выбрано: {selectedGenerals.size}. Нажмите на генералов для назначения:
@@ -193,7 +200,12 @@ export default function ContractScreen({
               </button>
               <button
                 className="btn btn-primary"
-                disabled={selectedGenerals.size === 0}
+                disabled={(() => {
+                  const c = getContract(selectedContract)
+                  if (!c) return true
+                  if (c.exactFit) return selectedGenerals.size !== c.maxGenerals
+                  return selectedGenerals.size === 0 || selectedGenerals.size > c.maxGenerals
+                })()}
                 onClick={handleStart}
               >
                 Назначить ({selectedGenerals.size})

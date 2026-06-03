@@ -869,6 +869,15 @@ body {
 .contract-option-name {
   font-size: 7px;
   margin-bottom: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.exact-badge {
+  font-size: 5px;
+  color: #e53935;
+  margin-left: 4px;
 }
 
 .contract-option-meta {

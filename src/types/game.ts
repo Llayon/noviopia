@@ -42,6 +42,8 @@ export interface Contract {
   reward: number
   risk: number
   requiredStats: Partial<GeneralStats>
+  maxGenerals: number
+  exactFit?: boolean
 }
 
 export interface ActiveContract {

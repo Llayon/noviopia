@@ -357,6 +357,9 @@ export const useGameStore = create<GameState>()((set, get) => {
       const c = getContract(contractId)
       if (!c) return false
 
+      if (generalIds.length > c.maxGenerals) return false
+      if (c.exactFit && generalIds.length !== c.maxGenerals) return false
+
       const busyGenerals = new Set(
         state.contracts.filter((ac) => !ac.completed).flatMap((ac) => ac.generalIds),
       )

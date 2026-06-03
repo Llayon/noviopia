@@ -124,19 +124,30 @@ export default function MapScreen({
                     setSelectedGenerals(new Set())
                   }}
                 >
-                  <div className="contract-option-name">{c.name}</div>
+                  <div className="contract-option-name">
+                    {c.name}
+                    {c.exactFit && <span className="exact-badge">🔴 макс {c.maxGenerals}</span>}
+                  </div>
                   <div className="contract-option-meta">
-                    +{c.reward} 🥫 · {c.durationSec}с · риск {Math.round(c.risk * 100)}%
+                    +{c.reward} 🥫 · {c.durationSec}с · 👤 {c.maxGenerals}
+                    {c.exactFit ? ' (строго)' : ''}
                   </div>
                 </div>
               ))}
             </div>
 
-            {selectedContract && (
+            {selectedContract && (() => {
+              const selC = contracts.find(c => c.id === selectedContract)
+              const maxGens = selC?.maxGenerals ?? 1
+              const isExact = selC?.exactFit ?? false
+              const slotStatus = isExact
+                ? `Требуется ровно ${maxGens} генерал${maxGens > 1 ? 'а' : ''} 🔴`
+                : `Можно назначить до ${maxGens} генерал${maxGens > 1 ? 'ов' : 'а'}`
+              return (
               <>
                 <div className="modal-divider" />
                 <p className="modal-desc">
-                  Выбрано: {selectedGenerals.size}. Нажмите на генералов для назначения:
+                  {slotStatus}. Выбрано: {selectedGenerals.size}. Нажмите для назначения:
                 </p>
                 <div className="general-list">
                   {ownedList
@@ -160,7 +171,7 @@ export default function MapScreen({
                     })}
                 </div>
               </>
-            )}
+            )})()}
 
             <div className="modal-actions">
               <button
@@ -175,7 +186,13 @@ export default function MapScreen({
               </button>
               <button
                 className="btn btn-primary"
-                disabled={!selectedContract || selectedGenerals.size === 0}
+                disabled={(() => {
+                  if (!selectedContract) return true
+                  const selC = contracts.find(c => c.id === selectedContract)
+                  if (!selC) return true
+                  if (selC.exactFit) return selectedGenerals.size !== selC.maxGenerals
+                  return selectedGenerals.size === 0 || selectedGenerals.size > selC.maxGenerals
+                })()}
                 onClick={handleStartContract}
               >
                 Начать ({selectedGenerals.size})
