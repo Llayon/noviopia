@@ -29,7 +29,7 @@ export function loadSave(): Partial<GameState> | null {
     const raw = localStorage.getItem(SAVE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw)
-    const result = SaveDataSchema.safeParse(parsed)
+    const result = SaveDataSchema.safeParse(parsed, undefined)
     if (!result.success) {
       console.warn('Save data validation failed, clearing:', result.error.issues)
       clearSave()

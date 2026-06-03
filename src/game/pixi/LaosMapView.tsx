@@ -107,6 +107,7 @@ export default function LaosMapView({
 
     initApp()
     return () => { app.destroy(true, { children: true }); appRef.current = null }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

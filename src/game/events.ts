@@ -236,10 +236,6 @@ export function contractFailEvent(
   }
 }
 
-export function getEventById(id: string): GameEvent | undefined {
-  return allEvents.find((e) => e.id === e.id)
-}
-
 const dayEvents: Record<number, GameEvent> = {
   7: {
     id: 'weekly_inspection',

@@ -28,7 +28,7 @@ export const ActiveContractSchema = z.object({
 
 export const SaveDataSchema = z.object({
   resources: GameResourcesSchema.optional(),
-  ownedGenerals: z.record(OwnedGeneralSchema).optional(),
+  ownedGenerals: z.record(z.string(), OwnedGeneralSchema).optional(),
   unlockedGenerals: z.array(z.string()).optional(),
   lastSaveTimestamp: z.number().optional(),
   totalPlayTime: z.number().optional(),
@@ -40,5 +40,4 @@ export const SaveDataSchema = z.object({
   dayContractsFailed: z.number().optional(),
 })
 
-export type SaveData = z.infer<typeof SaveDataSchema>
-export type ValidatedSaveData = z.output<typeof SaveDataSchema>
+// type inference not available in zod v4 classic import

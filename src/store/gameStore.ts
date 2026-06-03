@@ -15,7 +15,7 @@ import {
 import allGenerals, { getGeneral } from '../data/generals'
 import { saveGame, loadSave, clearSave } from './save'
 import { contractFailEvent, getDayEvent } from '../game/events'
-import contractsData, { getContract } from '../data/contracts'
+import { getContract } from '../data/contracts'
 
 let contractIdCounter = 0
 

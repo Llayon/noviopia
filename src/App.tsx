@@ -34,7 +34,7 @@ declare global {
 }
 
 export default function App() {
-  const [page, setPage] = useState<string>('map')
+  const [page, setPage] = useState<Page>('map')
   const [selectedGeneral, setSelectedGeneral] = useState<string | null>(null)
   const activeEvent = useGameStore((s) => s.activeEvent)
 
@@ -63,17 +63,17 @@ export default function App() {
             </div>
           }
         >
-          <MapScreen onNavigate={setPage} />
+          <MapScreen onNavigate={(p) => setPage(p as Page)} />
         </Suspense>
       )}
-      {page === 'main' && <MainScreen onNavigate={setPage} />}
+      {page === 'main' && <MainScreen onNavigate={(p) => setPage(p as Page)} />}
       {page === 'collection' && (
-        <Collection onNavigate={setPage} onSelectGeneral={handleSelectGeneral} />
+        <Collection onNavigate={(p) => setPage(p as Page)} onSelectGeneral={handleSelectGeneral} />
       )}
       {page === 'detail' && (
-        <GeneralDetail generalId={selectedGeneral} onNavigate={setPage} />
+        <GeneralDetail generalId={selectedGeneral} onNavigate={(p) => setPage(p as Page)} />
       )}
-      {page === 'contracts' && <ContractScreen onNavigate={setPage} />}
+      {page === 'contracts' && <ContractScreen onNavigate={(p) => setPage(p as Page)} />}
       <DailyReport />
       <ToastBar />
       {activeEvent && <EventPopup />}

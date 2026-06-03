@@ -9,9 +9,6 @@ export interface District {
   capitalPos: [number, number]
 }
 
-const W = 1
-const H = 1
-
 export const districts: District[] = [
   {
     id: 'north',
