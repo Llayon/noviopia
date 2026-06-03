@@ -1,4 +1,4 @@
-import { Contract } from '../types/game'
+import type { Contract } from './derived'
 
 const contracts: Contract[] = [
   {
@@ -227,7 +227,3 @@ const contracts: Contract[] = [
 ]
 
 export default contracts
-
-export function getContract(id: string): Contract | undefined {
-  return contracts.find((c) => c.id === id)
-}

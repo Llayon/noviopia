@@ -1,3 +1,14 @@
+// Game types — hand-written runtime types only.
+// Domain types (Contract, General, GameEvent, EventChoice, GeneralStats) are
+// defined in `./data/derived.ts` (next to data files) and re-exported here for
+// backward compatibility with existing imports.
+
+import type { Contract, EventChoice, GameEvent, General, GeneralStats } from '../data/derived'
+
+export type { Contract, EventChoice, GameEvent, General, GeneralStats }
+
+// ─── Enums (source of truth for rarity / rank values) ───
+
 export interface ActiveContract {
   completed: boolean
   contractId: string
@@ -8,37 +19,16 @@ export interface ActiveContract {
   startTime: number
   success: boolean
 }
-export interface Contract {
-  description: string
-  durationSec: number
-  exactFit?: boolean
-  id: string
-  maxGenerals: number
-  midEvents?: GameEvent[]
-  name: string
-  requiredStats: Partial<GeneralStats>
-  reward: number
-  risk: number
+
+export interface DayReport {
+  contractsCompleted: number
+  contractsFailed: number
+  dayNumber: number
+  eventsHandled: number
+  tushonkaEarned: number
 }
 
-export interface EventChoice {
-  description: string
-  label: string
-  loyaltyChange?: number
-  medalsCost?: number
-  medalsReward?: number
-  tushonkaCost?: number
-  tushonkaReward?: number
-}
-
-export interface GameEvent {
-  choices: EventChoice[]
-  description: string
-  duration: number
-  id: string
-  title: string
-  type: 'escape' | 'inspection' | 'promotion' | 'scandal' | 'testimony'
-}
+// ─── Runtime State (Zustand, not derived from data) ───
 
 export interface GameResources {
   medals: number
@@ -79,24 +69,6 @@ export interface GameState {
   upgradeGeneral: (id: string) => boolean
 }
 
-export interface General {
-  cost: number
-  description: string
-  id: string
-  incomePerSec: number
-  name: string
-  rank: Rank
-  rarity: Rarity
-  stats: GeneralStats
-}
-
-export interface GeneralStats {
-  loyalty: number
-  speed: number
-  stealth: number
-  theft: number
-}
-
 export interface OwnedGeneral {
   generalId: string
   isActive: boolean
@@ -117,6 +89,8 @@ export interface ToastMessage {
   id: string
 }
 
+// ─── Display Constants (hand-maintained) ───
+
 export const RANK_NAMES: Record<Rank, string> = {
   general: 'Генерал-майор',
   leytenant: 'Лейтенант',
@@ -132,6 +106,8 @@ export const RARITY_COLORS: Record<Rarity, string> = {
   rare: '#42a5f5',
 }
 
+// ─── Game Balance Constants ───
+
 export const RANK_MULTIPLIERS = [1, 1.5, 2.5, 4, 7]
 export const MAX_LOYALTY = 100
 export const MAX_STRESS = 100
@@ -139,11 +115,3 @@ export const STRESS_PER_SEC = 0.15
 export const STRESS_DECAY_PER_SEC = 0.08
 export const TICK_INTERVAL_MS = 1000
 export const DAY_LENGTH_SEC = 90
-
-export interface DayReport {
-  contractsCompleted: number
-  contractsFailed: number
-  dayNumber: number
-  eventsHandled: number
-  tushonkaEarned: number
-}

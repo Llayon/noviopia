@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 
-import contracts, { getContract } from '../data/contracts'
-import { getGeneral } from '../data/generals'
+import contracts from '../data/contracts'
+import { getContract, getGeneral } from '../data/derived'
 import { useGameStore } from '../store/gameStore'
 import { type General, RANK_NAMES, RARITY_COLORS } from '../types/game'
 

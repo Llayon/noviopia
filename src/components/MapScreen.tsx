@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 
 import contracts from '../data/contracts'
-import { getGeneral } from '../data/generals'
+import { getGeneral } from '../data/derived'
 import { getDistrict } from '../data/laosMap'
 import LaosMapView, { MapClickInfo } from '../game/pixi/LaosMapView'
 import { useGameStore } from '../store/gameStore'

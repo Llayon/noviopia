@@ -1,4 +1,4 @@
-import { getGeneral } from '../data/generals'
+import { getGeneral } from '../data/derived'
 import { useGameStore } from '../store/gameStore'
 import { RANK_NAMES, RARITY_COLORS } from '../types/game'
 

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
-import { getContract } from '../data/contracts'
-import allGenerals, { getGeneral } from '../data/generals'
+import { getContract, getGeneral } from '../data/derived'
+import allGenerals from '../data/generals'
 import { contractFailEvent, getDayEvent } from '../game/events'
 import {
   ActiveContract,

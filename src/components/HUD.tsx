@@ -1,4 +1,4 @@
-import { getGeneral } from '../data/generals'
+import { getGeneral } from '../data/derived'
 import { useGameStore } from '../store/gameStore'
 import { MAX_LOYALTY, RANK_MULTIPLIERS } from '../types/game'
 

@@ -1,7 +1,7 @@
 import { Application, Container, Graphics, Texture, TilingSprite } from 'pixi.js'
 import { useEffect, useRef } from 'react'
 
-import { getGeneral } from '../../data/generals'
+import { getGeneral } from '../../data/derived'
 import { useGameStore } from '../../store/gameStore'
 import { RARITY_COLORS } from '../../types/game'
 import { createPortrait } from './GeneralPortrait'

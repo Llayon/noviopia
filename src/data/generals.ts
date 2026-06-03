@@ -1,4 +1,4 @@
-import { type General } from '../types/game'
+import type { General } from './derived'
 
 const allGenerals: General[] = [
   // ─── Common (5) ─────────────────────────────────────────
@@ -161,6 +161,3 @@ const allGenerals: General[] = [
 ]
 
 export default allGenerals
-
-export const getGeneral = (id: string): General | undefined =>
-  allGenerals.find((g) => g.id === id)
