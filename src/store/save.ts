@@ -1,4 +1,5 @@
 import { GameState } from '../types/game'
+import { SaveDataSchema } from './schema'
 
 const SAVE_KEY = 'noviopia-save'
 
@@ -27,7 +28,14 @@ export function loadSave(): Partial<GameState> | null {
   try {
     const raw = localStorage.getItem(SAVE_KEY)
     if (!raw) return null
-    return JSON.parse(raw) as Partial<GameState>
+    const parsed = JSON.parse(raw)
+    const result = SaveDataSchema.safeParse(parsed)
+    if (!result.success) {
+      console.warn('Save data validation failed, clearing:', result.error.issues)
+      clearSave()
+      return null
+    }
+    return result.data as Partial<GameState>
   } catch {
     return null
   }
