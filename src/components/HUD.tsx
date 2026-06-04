@@ -7,6 +7,7 @@ export default function HUD() {
   const ownedGenerals = useGameStore((s) => s.ownedGenerals)
   const contracts = useGameStore((s) => s.contracts)
   const dayCounter = useGameStore((s) => s.dayCounter)
+  const goal = useGameStore((s) => s.goal)
   const ownedCount = Object.values(ownedGenerals).filter((o) => o.isOwned).length
   const totalCount = Object.keys(ownedGenerals).length
 
@@ -23,7 +24,20 @@ export default function HUD() {
     return acc + g.incomePerSec * rankMult * loyaltyMult * owned.level * mult
   }, 0)
 
+  const salary = Object.entries(ownedGenerals).reduce((acc, [id, owned]) => {
+    if (!owned.isOwned) return acc
+    const g = getGeneral(id)
+    if (!g) return acc
+    const rankMult = RANK_MULTIPLIERS[owned.rankIndex] ?? 1
+    return acc + ({ common: 0.3, epic: 1.2, legendary: 2.0, rare: 0.6 }[g.rarity] ?? 0) * rankMult
+  }, 0)
+
+  const net = income - salary
+  const netSign = net >= 0 ? '+' : ''
+  const netColor = net >= 0 ? '#aed581' : '#ef9a9a'
   const activeCount = contracts.filter((c) => !c.completed).length
+  const goalPct = Math.min(100, (resources.tushonka / goal.target) * 100)
+  const daysLeft = Math.max(0, goal.dayLimit - dayCounter + 1)
 
   return (
     <div className="hud">
@@ -38,9 +52,20 @@ export default function HUD() {
       <div className="hud-item hud-day">
         <span className="hud-day-label">День</span>
         <span className="hud-day-value">{dayCounter}</span>
+        <span className="hud-day-sep">/</span>
+        <span className="hud-day-limit">{goal.dayLimit}</span>
+      </div>
+      <div className="hud-item hud-goal">
+        <span className="hud-goal-label">Цель</span>
+        <div className="hud-goal-bar">
+          <div className="hud-goal-fill" style={{ width: `${goalPct}%` }} />
+        </div>
+        <span className="hud-goal-text">
+          {Math.floor(resources.tushonka)}/{goal.target} ({daysLeft}д)
+        </span>
       </div>
       <div className="hud-item hud-income">
-        <span>+{income.toFixed(1)}/с</span>
+        <span style={{ color: netColor }}>{netSign}{net.toFixed(1)}/с</span>
       </div>
       <div className="hud-item">
         <span className="hud-collection">

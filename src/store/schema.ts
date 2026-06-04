@@ -13,6 +13,7 @@ export const OwnedGeneralSchema = z.object({
   loyalty: z.number(),
   rankIndex: z.number(),
   stress: z.number(),
+  stressOverloadSec: z.number().default(0),
 })
 
 export const ActiveContractSchema = z.object({
@@ -26,13 +27,22 @@ export const ActiveContractSchema = z.object({
   success: z.boolean(),
 })
 
+export const GameGoalSchema = z.object({
+  dayLimit: z.number(),
+  target: z.number(),
+})
+
+export const GameStatusSchema = z.enum(['lost', 'playing', 'won'])
+
 export const SaveDataSchema = z.object({
   dayContractsCompleted: z.number().optional(),
   dayContractsFailed: z.number().optional(),
   dayCounter: z.number().optional(),
   dayStartTushonka: z.number().optional(),
   dayTimer: z.number().optional(),
+  gameStatus: GameStatusSchema.optional(),
   generalsOrder: z.array(z.string()).optional(),
+  goal: GameGoalSchema.optional(),
   lastSaveTimestamp: z.number().optional(),
   ownedGenerals: z.record(z.string(), OwnedGeneralSchema).optional(),
   resources: GameResourcesSchema.optional(),

@@ -2,13 +2,19 @@ import { create } from 'zustand'
 
 import { getContract, getGeneral } from '../data/derived'
 import allGenerals from '../data/generals'
+import { calcIncome, calcSalaryPerSec, calcSuccessChance } from '../game/economy'
 import { contractFailEvent, getDayEvent } from '../game/events'
+import { checkWinLose } from '../game/goal'
+import { applyGeneralTick } from '../game/progression'
 import {
   ActiveContract,
   DAY_LENGTH_SEC,
   DayReport,
   GameEvent,
   GameState,
+  GameStatus,
+  GOAL_DAY_LIMIT,
+  GOAL_TARGET_TUSHONKA,
   MAX_LOYALTY,
   MAX_STRESS,
   OwnedGeneral,
@@ -19,57 +25,6 @@ import {
 import { clearSave, loadSave, saveGame } from './save'
 
 let contractIdCounter = 0
-
-function calcIncome(
-  ownedGenerals: Record<string, OwnedGeneral>,
-  activeContracts: ActiveContract[],
-): number {
-  const busyGenerals = new Set(
-    activeContracts.filter((c) => !c.completed).flatMap((c) => c.generalIds),
-  )
-
-  let total = 0
-  for (const entry of Object.values(ownedGenerals)) {
-    if (!entry.isOwned) continue
-    const g = getGeneral(entry.generalId)
-    if (!g) continue
-    const rankMult = RANK_MULTIPLIERS[entry.rankIndex] ?? 1
-    const loyaltyMult = entry.loyalty / MAX_LOYALTY
-    const stressPenalty = 1 - (entry.stress / MAX_STRESS) * 0.5
-
-    if (busyGenerals.has(entry.generalId)) {
-      total += g.incomePerSec * rankMult * loyaltyMult * entry.level * 0.25 * stressPenalty
-    } else {
-      total += g.incomePerSec * rankMult * loyaltyMult * entry.level * stressPenalty
-    }
-  }
-  return total
-}
-
-function calcSuccessChance(generalIds: string[], contractId: string, ownedGenerals: Record<string, OwnedGeneral>): number {
-  const c = getContract(contractId)
-  if (!c || generalIds.length === 0) return 0
-
-  const required = Object.values(c.requiredStats).reduce((sum, v) => sum + (v), 0)
-  if (required === 0) return 0.9
-
-  let totalScore = 0
-  generalIds.forEach((gid, i) => {
-    const g = getGeneral(gid)
-    const owned = ownedGenerals[gid]
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (!g || !owned) return
-
-    const statSum = g.stats.theft + g.stats.speed + g.stats.stealth + g.stats.loyalty
-    const stressPenalty = 1 - (owned.stress / MAX_STRESS) * 0.3
-    const diminishing = 1 / Math.pow(1.5, i)
-
-    totalScore += statSum * stressPenalty * diminishing
-  })
-
-  const ratio = totalScore / required
-  return Math.min(0.95, ratio * 0.15)
-}
 
 function getInitialGenerals(): Record<string, OwnedGeneral> {
   const result: Record<string, OwnedGeneral> = {}
@@ -82,6 +37,7 @@ function getInitialGenerals(): Record<string, OwnedGeneral> {
       loyalty: MAX_LOYALTY,
       rankIndex: 0,
       stress: 0,
+      stressOverloadSec: 0,
     }
   })
   result['prokladov'] = { ...result['prokladov'], isActive: true, isOwned: true }
@@ -95,6 +51,7 @@ export const useGameStore = create<GameState>()((set, get) => {
   const baseUnlocked: string[] = ['prokladov']
   const baseResources = { medals: 0, tushonka: 30 }
   const baseOrder = allGenerals.map((g) => g.id)
+  const baseGoal = { dayLimit: GOAL_DAY_LIMIT, target: GOAL_TARGET_TUSHONKA }
 
   let initialOwned = saved?.ownedGenerals ?? baseGenerals
   let initialUnlocked = saved?.unlockedGenerals ?? baseUnlocked
@@ -103,6 +60,8 @@ export const useGameStore = create<GameState>()((set, get) => {
   const initialPlayTime = saved?.totalPlayTime ?? 0
   let initialOrder = saved?.generalsOrder ?? baseOrder
   const initialContracts = saved?.contracts ?? ([] as ActiveContract[])
+  const initialGoal = saved?.goal ?? baseGoal
+  const initialGameStatus: GameStatus = saved?.gameStatus ?? 'playing'
 
   const hasAnyOwned = Object.values(initialOwned).some((o) => o.isOwned)
   if (saved && !hasAnyOwned) {
@@ -110,6 +69,11 @@ export const useGameStore = create<GameState>()((set, get) => {
     initialUnlocked = baseUnlocked
     initialResources = baseResources
     initialOrder = baseOrder
+  }
+
+  const ownedWithDefaults: Record<string, OwnedGeneral> = {}
+  for (const [id, o] of Object.entries(initialOwned)) {
+    ownedWithDefaults[id] = { ...o, stressOverloadSec: o.stressOverloadSec ?? 0 }
   }
 
   return {
@@ -216,7 +180,9 @@ export const useGameStore = create<GameState>()((set, get) => {
       })
       return true
     },
+    gameStatus: initialGameStatus,
     generalsOrder: initialOrder,
+    goal: initialGoal,
     lastSaveTimestamp: initialTimestamp,
 
     openToastAsEvent: (toastId: string) => {
@@ -229,7 +195,7 @@ export const useGameStore = create<GameState>()((set, get) => {
       })
     },
 
-    ownedGenerals: initialOwned,
+    ownedGenerals: ownedWithDefaults,
 
     reset: () => {
       clearSave()
@@ -249,7 +215,9 @@ export const useGameStore = create<GameState>()((set, get) => {
         dayCounter: 1,
         dayStartTushonka: 30,
         dayTimer: 0,
+        gameStatus: 'playing',
         generalsOrder: allGenerals.map((g) => g.id),
+        goal: { dayLimit: GOAL_DAY_LIMIT, target: GOAL_TARGET_TUSHONKA },
         lastSaveTimestamp: Date.now(),
         ownedGenerals: resetGenerals,
         resources: { medals: 0, tushonka: 30 },
@@ -314,6 +282,7 @@ export const useGameStore = create<GameState>()((set, get) => {
     startContract: (contractId: string, generalIds: string[]) => {
       const state = get()
       if (generalIds.length === 0) return false
+      if (state.gameStatus !== 'playing') return false
 
       const c = getContract(contractId)
       if (!c) return false
@@ -350,25 +319,41 @@ export const useGameStore = create<GameState>()((set, get) => {
 
     tick: (deltaSeconds: number) => {
       const state = get()
+      if (state.gameStatus !== 'playing') return
 
       const busyGenerals = new Set(
         state.contracts.filter((c) => !c.completed).flatMap((c) => c.generalIds),
       )
 
-      const newGenerals = { ...state.ownedGenerals }
+      const salary = calcSalaryPerSec(state.ownedGenerals)
+      const canPaySalary = state.resources.tushonka > 0
+
+      const newGenerals: Record<string, OwnedGeneral> = { ...state.ownedGenerals }
+      const diedNames: string[] = []
       for (const [id, owned] of Object.entries(state.ownedGenerals)) {
-        if (owned.isOwned) {
-          const stressChange = busyGenerals.has(id) ? STRESS_PER_SEC : -STRESS_DECAY_PER_SEC
-          const newStress = Math.max(0, Math.min(MAX_STRESS, owned.stress + stressChange * deltaSeconds))
-          newGenerals[id] = {
-            ...owned,
-            loyalty: Math.max(0, Math.round((owned.loyalty - 0.1 * deltaSeconds) * 100) / 100),
-            stress: Math.round(newStress * 100) / 100,
+        if (!owned.isOwned) continue
+        const result = applyGeneralTick(owned, busyGenerals.has(id), canPaySalary, deltaSeconds)
+        if (result.died) {
+          const g = getGeneral(id)
+          if (g) diedNames.push(g.name)
+          newGenerals[id] = { ...result.next, isActive: false, isOwned: false }
+        } else {
+          newGenerals[id] = result.next
+        }
+      }
+
+      const hasActive = Object.values(newGenerals).some((o) => o.isOwned && o.isActive)
+      if (!hasActive) {
+        for (const [id, o] of Object.entries(newGenerals)) {
+          if (o.isOwned) {
+            newGenerals[id] = { ...o, isActive: true }
+            break
           }
         }
       }
 
       const income = calcIncome(newGenerals, state.contracts)
+      const netDelta = (income - salary) * deltaSeconds
 
       const now = Date.now()
 
@@ -397,16 +382,20 @@ export const useGameStore = create<GameState>()((set, get) => {
       if (newDayTimer >= DAY_LENGTH_SEC) {
         dayCounter = state.dayCounter + 1
         dayTimer = 0
+        const tushonkaEndOfDay = Math.max(0, state.resources.tushonka + netDelta)
+        const salariesPaid = Math.round(salary * deltaSeconds * 100) / 100
         dailyReport = {
           contractsCompleted: dayContractsCompleted,
           contractsFailed: dayContractsFailed,
           dayNumber: state.dayCounter,
           eventsHandled: 0,
-          tushonkaEarned: Math.round((state.resources.tushonka - state.dayStartTushonka) * 100) / 100,
+          generalsDied: diedNames,
+          salariesPaid,
+          tushonkaEarned: Math.round((tushonkaEndOfDay - state.dayStartTushonka) * 100) / 100,
         }
         dayContractsCompleted = 0
         dayContractsFailed = 0
-        dayStartTushonka = state.resources.tushonka + income * deltaSeconds
+        dayStartTushonka = tushonkaEndOfDay
       }
 
       const nowMs = Date.now()
@@ -429,6 +418,10 @@ export const useGameStore = create<GameState>()((set, get) => {
         return ac
       })
 
+      const newTushonka = Math.max(0, state.resources.tushonka + netDelta)
+      const goalResult = checkWinLose(newTushonka, dayCounter, state.goal)
+      const newGameStatus: GameStatus = goalResult?.status ?? 'playing'
+
       set({
         contracts: contractsWithMid,
         dailyReport,
@@ -437,10 +430,11 @@ export const useGameStore = create<GameState>()((set, get) => {
         dayCounter,
         dayStartTushonka,
         dayTimer,
+        gameStatus: newGameStatus,
         ownedGenerals: newGenerals,
         resources: {
           ...state.resources,
-          tushonka: Math.round((state.resources.tushonka + income * deltaSeconds) * 100) / 100,
+          tushonka: Math.round(newTushonka * 100) / 100,
         },
         toasts: newToasts,
         totalPlayTime: state.totalPlayTime + deltaSeconds,
@@ -448,7 +442,7 @@ export const useGameStore = create<GameState>()((set, get) => {
 
       saveGame(get())
 
-      if (dailyReport) {
+      if (dailyReport && newGameStatus === 'playing') {
         const dayEvent = getDayEvent(dayCounter)
         if (dayEvent) {
           get().triggerEvent(dayEvent)
@@ -463,6 +457,7 @@ export const useGameStore = create<GameState>()((set, get) => {
     triggerEvent: (customEvent?: GameEvent) => {
       const state = get()
       if (state.activeEvent) return
+      if (state.gameStatus !== 'playing') return
       if (!customEvent) return
       set({ activeEvent: customEvent })
     },
@@ -494,3 +489,5 @@ export const useGameStore = create<GameState>()((set, get) => {
     },
   }
 })
+
+export { MAX_STRESS, STRESS_DECAY_PER_SEC, STRESS_PER_SEC }

@@ -25,15 +25,24 @@ export interface DayReport {
   contractsFailed: number
   dayNumber: number
   eventsHandled: number
+  generalsDied: string[]
+  salariesPaid: number
   tushonkaEarned: number
 }
 
-// ─── Runtime State (Zustand, not derived from data) ───
+// ─── Win/Lose (TITP-inspired 90-day goal) ───
+
+export interface GameGoal {
+  dayLimit: number
+  target: number
+}
 
 export interface GameResources {
   medals: number
   tushonka: number
 }
+
+// ─── Runtime State (Zustand, not derived from data) ───
 
 export interface GameState {
   activeEvent: GameEvent | null
@@ -50,7 +59,9 @@ export interface GameState {
   dismissReport: () => void
   dismissToast: (toastId: string) => void
   feedGeneral: (id: string) => boolean
+  gameStatus: GameStatus
   generalsOrder: string[]
+  goal: GameGoal
   lastSaveTimestamp: number
 
   openToastAsEvent: (toastId: string) => void
@@ -69,6 +80,8 @@ export interface GameState {
   upgradeGeneral: (id: string) => boolean
 }
 
+export type GameStatus = 'lost' | 'playing' | 'won'
+
 export interface OwnedGeneral {
   generalId: string
   isActive: boolean
@@ -77,6 +90,7 @@ export interface OwnedGeneral {
   loyalty: number
   rankIndex: number
   stress: number
+  stressOverloadSec: number
 }
 
 export type Rank = 'general' | 'leytenant' | 'marshal' | 'polkovnik' | 'praporshik'
@@ -115,3 +129,23 @@ export const STRESS_PER_SEC = 0.15
 export const STRESS_DECAY_PER_SEC = 0.08
 export const TICK_INTERVAL_MS = 1000
 export const DAY_LENGTH_SEC = 90
+
+// ─── Goal / Win-Lose (TITP-inspired: reach X тушёнки in N days) ───
+
+export const GOAL_TARGET_TUSHONKA = 1000
+export const GOAL_DAY_LIMIT = 30
+
+// ─── Salary (each owned general eats тушёнка per second) ───
+
+export const SALARY_PER_RARITY: Record<Rarity, number> = {
+  common: 0.3,
+  epic: 1.2,
+  legendary: 2.0,
+  rare: 0.6,
+}
+
+// ─── Stress death (max stress sustained for N seconds = death) ───
+
+export const STRESS_DEATH_THRESHOLD_SEC = 30
+export const LOYALTY_DECAY_PER_SEC = 0.1
+export const LOYALTY_DECAY_PENALTY_PER_SEC = 0.5

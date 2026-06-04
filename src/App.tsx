@@ -4,6 +4,7 @@ import Collection from './components/Collection'
 import ContractScreen from './components/ContractScreen'
 import DailyReport from './components/DailyReport'
 import EventPopup from './components/EventPopup'
+import GameOverScreen from './components/GameOverScreen'
 import GeneralDetail from './components/GeneralDetail'
 import MainScreen from './components/MainScreen'
 import ToastBar from './components/ToastBar'
@@ -77,6 +78,7 @@ export default function App() {
       {page === 'contracts' && <ContractScreen onNavigate={(p) => { setPage(p as Page); }} />}
       <DailyReport />
       <ToastBar />
+      <GameOverScreen />
       {activeEvent && <EventPopup />}
     </div>
   )
