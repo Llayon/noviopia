@@ -8,6 +8,8 @@ export default function HUD() {
   const contracts = useGameStore((s) => s.contracts)
   const dayCounter = useGameStore((s) => s.dayCounter)
   const goal = useGameStore((s) => s.goal)
+  const kgbAttention = useGameStore((s) => s.kgbAttention)
+  const pressAttention = useGameStore((s) => s.pressAttention)
   const ownedCount = Object.values(ownedGenerals).filter((o) => o.isOwned).length
   const totalCount = Object.keys(ownedGenerals).length
 
@@ -66,6 +68,14 @@ export default function HUD() {
       </div>
       <div className="hud-item hud-income">
         <span style={{ color: netColor }}>{netSign}{net.toFixed(1)}/с</span>
+      </div>
+      <div className="hud-item hud-attention">
+        <span className="hud-attention-icon" style={{ color: kgbAttention > 50 ? '#ef9a9a' : '#90caf9' }}>КГБ</span>
+        <div className="hud-attention-bar"><div className="hud-attention-fill" style={{ background: kgbAttention > 50 ? '#ef9a9a' : '#90caf9', width: `${kgbAttention}%` }} /></div>
+      </div>
+      <div className="hud-item hud-attention">
+        <span className="hud-attention-icon" style={{ color: pressAttention > 50 ? '#ef9a9a' : '#fff59d' }}>PR</span>
+        <div className="hud-attention-bar"><div className="hud-attention-fill" style={{ background: pressAttention > 50 ? '#ef9a9a' : '#fff59d', width: `${pressAttention}%` }} /></div>
       </div>
       <div className="hud-item">
         <span className="hud-collection">

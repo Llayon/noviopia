@@ -58,11 +58,15 @@ export interface GameState {
   dayTimer: number
   dismissReport: () => void
   dismissToast: (toastId: string) => void
+  dispatchToLiveEvent: (eventId: string, generalIds: string[]) => boolean
   feedGeneral: (id: string) => boolean
   gameStatus: GameStatus
   generalsOrder: string[]
   goal: GameGoal
+  kgbAttention: number
   lastSaveTimestamp: number
+  liveEvents: LiveEvent[]
+  pressAttention: number
 
   openToastAsEvent: (toastId: string) => void
   ownedGenerals: Record<string, OwnedGeneral>
@@ -81,6 +85,21 @@ export interface GameState {
 }
 
 export type GameStatus = 'lost' | 'playing' | 'won'
+
+export interface LiveEvent {
+  description: string
+  districtId: string
+  id: string
+  maxGenerals: number
+  penalty: number
+  position: [number, number]
+  remainingSec: number
+  reward: number
+  severity: LiveEventSeverity
+  title: string
+}
+
+export type LiveEventSeverity = 'critical' | 'high' | 'low' | 'medium'
 
 export interface OwnedGeneral {
   generalId: string

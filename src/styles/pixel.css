@@ -93,6 +93,30 @@ body {
   color: var(--text-dim);
 }
 
+.hud-attention {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 6px;
+}
+
+.hud-attention-icon {
+  font-weight: bold;
+  min-width: 18px;
+}
+
+.hud-attention-bar {
+  width: 40px;
+  height: 6px;
+  background: var(--bg-surface);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.hud-attention-fill {
+  height: 100%;
+  transition: width 0.3s;
+}
+
 /* ── Main Screen ── */
 .warehouse-bg {
   flex: 1;
@@ -672,6 +696,11 @@ body {
   border-color: var(--gold);
 }
 
+.general-option.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .general-option-rank {
   font-size: 6px;
   color: var(--text-dim);
@@ -823,6 +852,19 @@ body {
   font-size: 7px;
   padding: 4px 0;
   border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.toast-bar {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg-card);
+  border: 2px solid var(--gold);
+  padding: 12px 24px;
+  font-size: 8px;
+  z-index: 100;
+  text-align: center;
 }
 
 .completed-bar {

@@ -52,7 +52,7 @@ export interface GameEvent {
   duration: number
   id: string
   title: string
-  type: 'escape' | 'inspection' | 'promotion' | 'scandal' | 'testimony'
+  type: 'escape' | 'inspection' | 'liveExpired' | 'promotion' | 'scandal' | 'testimony'
 }
 
 export interface General {
