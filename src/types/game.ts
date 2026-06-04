@@ -66,10 +66,10 @@ export interface GameState {
   kgbAttention: number
   lastSaveTimestamp: number
   liveEvents: LiveEvent[]
-  pressAttention: number
 
   openToastAsEvent: (toastId: string) => void
   ownedGenerals: Record<string, OwnedGeneral>
+  pressAttention: number
   reset: () => void
   resolveEvent: (choiceIndex: number) => void
   resources: GameResources
