@@ -197,6 +197,54 @@ body {
   margin-top: 8px;
 }
 
+/* ── General Panel ── */
+.general-panel {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 4px 8px;
+}
+
+.general-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  background: var(--bg-surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  font-size: 6px;
+  white-space: nowrap;
+}
+
+.general-chip.active {
+  border-color: var(--gold);
+}
+
+.general-chip.busy {
+  opacity: 0.5;
+}
+
+.chip-name {
+  color: var(--text);
+  max-width: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip-stress-bar {
+  width: 24px;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+}
+
+.chip-stress-fill {
+  height: 100%;
+}
+
+.chip-status {
+  font-size: 7px;
+}
+
 /* ── Buttons ── */
 .nav-buttons {
   display: flex;

@@ -7,6 +7,7 @@ import { getGeneral } from '../data/derived'
 import { getDistrict } from '../data/laosMap'
 import LaosMapView, { MapClickInfo } from '../game/pixi/LaosMapView'
 import { useGameStore } from '../store/gameStore'
+import GeneralPanel from './GeneralPanel'
 import HUD from './HUD'
 
 const SEVERITY_LABELS: Record<string, string> = {
@@ -109,6 +110,8 @@ export default function MapScreen({
           onLiveEventClick={handleLiveEventClick}
         />
       </div>
+
+      <GeneralPanel />
 
       <div className="nav-buttons">
         <button
