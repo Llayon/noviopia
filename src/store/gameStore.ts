@@ -59,8 +59,11 @@ export const useGameStore = create<GameState>()((set, get) => {
   }
 
   const ownedWithDefaults: Record<string, OwnedGeneral> = {}
-  for (const [id, o] of Object.entries(initialOwned)) {
-    ownedWithDefaults[id] = { ...o, stressOverloadSec: o.stressOverloadSec ?? 0 }
+  for (const [id, base] of Object.entries(baseGenerals)) {
+    const saved = initialOwned[id]
+    ownedWithDefaults[id] = saved
+      ? { ...base, ...saved, stressOverloadSec: saved.stressOverloadSec ?? 0 }
+      : base
   }
 
   return {
